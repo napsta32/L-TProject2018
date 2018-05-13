@@ -6,9 +6,18 @@ import org.scalajs.dom.EventTarget
 import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
-import scala.scalajs.js.{Tuple2}
+import scala.scalajs.js.{Dictionary, Tuple2}
 
 object ScalaJSExample {
+
+  val WORLD_COUNTRIES: Primitive = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_countries.json"
+  val WORLD_POPULATION: Primitive = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_population.tsv"
+
+  @js.native
+  trait CountryStruct extends js.Object {
+    def properties: Dictionary[String]
+    def population: Double
+  }
 
   @JSExportTopLevel("myproject")
   protected def getInstance(): this.type = this
@@ -18,15 +27,19 @@ object ScalaJSExample {
     d3.range(0, d.value, step).map((v: Double) => js.Dictionary("value" -> v, "angle" -> (v * k + d.startAngle)))
   }
 
-  def htmlGen(d)= {
-    return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Population: </strong><span class='details'>" + format(d.population) +"</span>"
-  }
-
   @JSExport
   def main(args: Array[String]): Unit = {
     case class Margin(left: Int, right: Int, top: Int, bottom: Int)
 
     var format = d3.format(",")
+
+    var htmlGen = (dobj: js.Object) => {
+      val d = dobj.asInstanceOf[CountryStruct]
+      "<strong>Country: </strong><span class='details'>" +
+          d.properties.get("name") + "<br></span>" +
+          "<strong>Population: </strong><span class='details'>" +
+          format(d.population) +"</span>"
+    }
 
     // Set tooltips
     var tip = d3.tip()
@@ -61,12 +74,17 @@ object ScalaJSExample {
     svg.call(tip)
 
     d3.queue()
-      .defer(d3.json, "world_countries.json")
-      .defer(d3.tsv, "world_population.tsv")
-      .await(ready);
+      .defer(d3.json, WORLD_COUNTRIES)
+      .defer(d3.tsv, WORLD_POPULATION)
+      .await((error: js.Any, args: js.Object*) => {
+        val data = args(0).asInstanceOf[CountryStruct]
+        val population = args(1).asInstanceOf[js.Array[js.Dictionary[String]]]
+
+        var populationById = js.Dictionary[String]
+      })
 
     function ready(error, data, population) {
-      val population = js.Array(js.Dictionary[String]("id" -> "CHN", "name" -> "China", "population" -> "1330141295"),
+      val population: js.Array[js.Dictionary[String]] = js.Array(js.Dictionary[String]("id" -> "CHN", "name" -> "China", "population" -> "1330141295"),
         js.Dictionary[String]("id" -> "IND", "name" -> "India", "population" -> "1173108018"),
         js.Dictionary[String]("id" -> "USA", "name" -> "United States", "population" -> "310232863"),
         js.Dictionary[String]("id" -> "IDN", "name" -> "Indonesia", "population" -> "242968342"),
