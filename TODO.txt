@@ -1,0 +1,42 @@
+https://github.com/d3/d3-shape
+http://bl.ocks.org/micahstubbs/8e15870eb432a21f0bc4d3d527b2d14f
+https://bost.ocks.org/mike/map/
+
+
+This year, your goal is to create a new library, based on D3.js, that will allow to create very specific plots, based on matrices. 
+
+Such plots are chords plots (https://bl.ocks.org/mbostock/1046712) and migration plots (http://usmigrationflowmapper.com).
+
+We want your library to:
+
+- Create a new plot in a very small number of lines, mostly by giving the underlying matrix and a list of names for each row/column of the matrix. For migration plots, we want to be able to select the part of the world to be displayed. And to dynamically modify it if needed (zoom, ...)
+
+- Be able to merge (sum) two entries, to create a new "group", such that the plot is dynamically updated. Other types of modification of the matrices is welcome!
+
+- Allow to animate most things.
+
+- Change most aspects of the plot, using D3, if needed. The more everything is parametrizable in a statically-typed way, the better.
+
+You will need to both create a new library but also to interface a bit D3.js with Scala.
+
+Attempt to use most of the features of Scala, including:
+
+    Strong and static typing
+    Type inference
+    By-name parameters
+    Implicits
+    Currying
+    Monads
+    Closures
+    ...
+    
+Evaluation
+^
+
+Building a good DSL is partially an art. There is therefore no unique result that is expected for your work. However, there are objective criterions that still can be used to evaluate it. Here is a non­exhaustive list of criterions that will be used to evaluate your project: 
+
+    Are you using the concepts presented during the course in an appropriate way (e.g. implicit parameters and conversions, operator overload, monads, by­name parameters, closures, currying, apply and update methods).
+    ls your DSL weakly coupled ? Your DSL should not modify the code of the library, i.e., your DSL has to be developed on top of it and not inside.
+    How easy, elegant and flexible is your DSL ? Have you added new abstractions that were not initially provided by the library ?
+    Are you hiding/removing functionalities of the library? Your DSL should not reduce the scope of problems that could be solved using the (part of) library (you chosen) but only provide users with an easier way to achieve specific goals. 
+    ls your code clean, well­ indented and documented ? Are the principle of functional programming used when possible (e.g., prefer immutable over mutable state when performances are not a bottleneck) ?
