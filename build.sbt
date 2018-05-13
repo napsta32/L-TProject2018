@@ -18,9 +18,7 @@ mainClass := Some("example.ScalaJSExample")
 
 npmDependencies in Compile ++= (
   "d3" -> "4.12.2" ::
-    Nil,
   "topojson" -> "3.0.2" ::
-    Nil,
   "d3-tip" -> "0.9.1" ::
     Nil
   )
