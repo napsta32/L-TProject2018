@@ -195,8 +195,10 @@ object ScalaJSExample {
         js.Dictionary[String]("id" -> "DNK", "name" -> "Denmark", "population" -> "5515575"))
       var populationById = js.Dictionary[String]
 
-      population.forEach(function(d) { populationById[d.id] = +d.population; });
-      data.features.forEach(function(d) { d.population = populationById[d.id] });
+      population.foreach((d: js.Dictionary[String]) => {
+        populationById.asInstanceOf[js.Dictionary[String]].update(d.get("id").get, d.get("population").get)
+      })
+      data.features.foreach(function(d) { d.population = populationById[d.id] });
 
       svg.append("g")
         .attr("class", "countries")
