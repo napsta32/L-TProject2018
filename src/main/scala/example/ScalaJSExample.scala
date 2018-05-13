@@ -108,7 +108,7 @@ object ScalaJSExample {
           .data(data.features)
           .enter().append("path")
           .attr("d", "path")
-          .style("fill", function(d) { return color(populationById[d.id]); })
+          .style("fill", (d: js.Object) => { color(populationById.asInstanceOf[js.Dictionary[String]].get(d.asInstanceOf[Feature].id))})
           .style("stroke", "white")
         .style("stroke-width", "1.5")
         .style("opacity","0.8")
