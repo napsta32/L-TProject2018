@@ -1,5 +1,6 @@
 package example
 
+import com.sun.org.apache.xalan.internal.utils.FeatureManager.Feature
 import d3v4._
 import org.scalajs.dom.EventTarget
 
@@ -10,8 +11,8 @@ import scala.scalajs.js.{Dictionary, Tuple2}
 
 object ScalaJSExample {
 
-  val WORLD_COUNTRIES: Primitive = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_countries.json"
-  val WORLD_POPULATION: Primitive = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_population.tsv"
+  var WORLD_COUNTRIES: Primitive = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_countries.json"
+  var WORLD_POPULATION: Primitive = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_population.tsv"
 
   @js.native
   trait Polygon extends js.Object {
@@ -23,6 +24,7 @@ object ScalaJSExample {
     def properties: js.Dictionary[String]
     def id: String
     def geometry: Polygon
+    def population : Double
   }
 
   @js.native
@@ -36,7 +38,7 @@ object ScalaJSExample {
   protected def getInstance(): this.type = this
 
   def groupTicks(d: ChordGroup, step: Double): js.Array[js.Dictionary[Double]] = {
-    val k: Double = (d.endAngle - d.startAngle) / d.value
+    var k: Double = (d.endAngle - d.startAngle) / d.value
     d3.range(0, d.value, step).map((v: Double) => js.Dictionary("value" -> v, "angle" -> (v * k + d.startAngle)))
   }
 
@@ -47,7 +49,7 @@ object ScalaJSExample {
     var format = d3.format(",")
 
     var htmlGen = (dobj: js.Object) => {
-      val d = dobj.asInstanceOf[CountryStruct]
+      var d = dobj.asInstanceOf[CountryStruct]
       "<strong>Country: </strong><span class='details'>" +
           d.properties.get("name") + "<br></span>" +
           "<strong>Population: </strong><span class='details'>" +
@@ -60,7 +62,7 @@ object ScalaJSExample {
       .offset(js.Tuple2(-10, 0))
       .html(htmlGen)
 
-    val margin = Margin(top = 0, right = 0, bottom = 0, left = 0)
+    var margin = Margin(top = 0, right = 0, bottom = 0, left = 0)
     var width = 960 - margin.left - margin.right
     var height = 500 - margin.top - margin.bottom;
 
@@ -90,22 +92,22 @@ object ScalaJSExample {
       .defer(d3.json, WORLD_COUNTRIES)
       .defer(d3.tsv, WORLD_POPULATION)
       .await((error: js.Any, args: js.Object*) => {
-        val data = args(0).asInstanceOf[CountryStruct]
-        val population = args(1).asInstanceOf[js.Array[js.Dictionary[String]]]
+        var data = args(0).asInstanceOf[CountryStruct]
+        var population = args(1).asInstanceOf[js.Array[js.Dictionary[String]]]
 
         var populationById = js.Dictionary[String]
 
         population.foreach((d: js.Dictionary[String]) => {
           populationById.asInstanceOf[js.Dictionary[String]].update(d.get("id").get, d.get("population").get)
         })
-        data.features.foreach(function(d) { d.population = populationById[d.id] });
+        data.features.foreach((d: Feature) => { d.population = populationById.asInstanceOf[js.Dictionary[String]].get("id") })
 
         svg.append("g")
           .attr("class", "countries")
           .selectAll("path")
           .data(data.features)
           .enter().append("path")
-          .attr("d", path)
+          .attr("d", "path")
           .style("fill", function(d) { return color(populationById[d.id]); })
           .style("stroke", "white")
         .style("stroke-width", 1.5)
@@ -113,28 +115,28 @@ object ScalaJSExample {
           // tooltips
           .style("stroke","white")
           .style("stroke-width", 0.3)
-        .on("mouseover",function(d){
-          tip.show(d);
+        .on("mouseover",() => {
+          d3.tip().hide()
 
-          d3.select(this)
-            .style("opacity", 1)
+          d3.select("body")
+            .style("opacity", "1")
             .style("stroke","white")
-            .style("stroke-width",3);
+            .style("stroke-width","3");
         })
-        .on("mouseout", function(d){
-          tip.hide(d);
+        .on("mouseout", () => {
+          d3.tip().hide()
 
-          d3.select(this)
-            .style("opacity", 0.8)
+          d3.select("body")
+            .style("opacity", "0.8")
             .style("stroke","white")
-            .style("stroke-width",0.3);
+            .style("stroke-width","0.3");
         });
 
         svg.append("path")
           .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
           // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
           .attr("class", "names")
-          .attr("d", path)
+          .attr("d", "path")
       })
 
     }
