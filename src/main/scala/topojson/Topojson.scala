@@ -1,12 +1,12 @@
+package topojson
 
-package topojson {
+import d3v4.Primitive
 
-  object topojson
+import scala.scalajs.js
+import scala.scalajs.js.annotation.JSImport
 
-}
-
-package object topojson {
-
-  implicit def d3toTopojsonClient(d3t: topojson.type): topojsonclient.type = topojsonclient
-
+@JSImport("topojson", JSImport.Namespace)
+@js.native
+object topojson extends js.Object {
+    def mesh[Topology](topology: js.Array[Topology], comparator: js.Function2[Topology, Topology, Primitive]): this.type = js.native
 }

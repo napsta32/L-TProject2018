@@ -1,6 +1,7 @@
 package example
 
 import d3v4._
+import topojson.topojson
 
 import scala.language.implicitConversions
 import scala.scalajs.js
@@ -102,7 +103,7 @@ object ScalaJSExample {
 
         var getColor: (Feature, Int, UndefOr[Int]) => Primitive = (d: Feature, _: Int, _: UndefOr[Int]) => customColor(populationById.get(d.id).get)
 
-        var x = svg.append("g")
+        svg.append("g")
           .attr("class", "countries")
           .selectAll("path")
           .data(data.features)
@@ -132,11 +133,12 @@ object ScalaJSExample {
             .style("stroke-width","0.3")
         })
 
-        /** svg.append("path")
-          .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
+        var meshFunction: (Feature, Feature) => Primitive = (a: Feature, b: Feature) => a.id != b.id
+        svg.append("path")
+          .datum(topojson.mesh[Feature](data.features, meshFunction))
           // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
           .attr("class", "names")
-          .attr("d", "path") */
+          .attr("d", "path")
       })
 
     }
