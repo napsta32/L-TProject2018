@@ -100,7 +100,7 @@ object ScalaJSExample {
         })
         data.features.map(d => populationById.get("id"))
 
-        var getColor: (Feature, Int, UndefOr[Int]) => Primitive = (d: Feature, _: Int, _: UndefOr[Int]) => customColor(populationById.get(d.id))
+        var getColor: (Feature, Int, UndefOr[Int]) => Primitive = (d: Feature, _: Int, _: UndefOr[Int]) => customColor(populationById.get(d.id).get)
 
         var x = svg.append("g")
           .attr("class", "countries")
