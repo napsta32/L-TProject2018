@@ -5,13 +5,13 @@ import topojson.topojson
 
 import scala.language.implicitConversions
 import scala.scalajs.js
-import scala.scalajs.js.UndefOr
+import scala.scalajs.js.{UndefOr, |}
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
 object ScalaJSExample {
 
-  var WORLD_COUNTRIES: Primitive = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_countries.json"
-  var WORLD_POPULATION: Primitive = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_population.tsv"
+  var WORLD_COUNTRIES = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_countries.json"
+  var WORLD_POPULATION = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_population.tsv"
 
   @js.native
   trait Polygon extends js.Object {
@@ -56,10 +56,10 @@ object ScalaJSExample {
     }
 
     // Set tooltips
-    var tip = d3.tip()
+    /*var tip = d3.tip()
       .attr("class", "d3-tip")
       .offset(js.Tuple2(-10, 0))
-      .html(htmlGen)
+      .html(htmlGen)*/
 
     var margin = Margin(top = 0, right = 0, bottom = 0, left = 0)
     var width = 960 - margin.left - margin.right
@@ -85,11 +85,18 @@ object ScalaJSExample {
 
     var path = d3.geoPath().projection(projection)
 
-    svg.call(tip)
+    // svg.call(tip)
+
+    var callJSON: (String, js.Function1[js.Object, Unit]) => Unit = d3.json
+    var callTSV: (String, js.Function2[js.Any, js.Array[js.Dictionary[String]], Unit]) => Unit = d3.tsv
+
+    type ResponseCallback = js.Function2[js.Any, js.Array[js.Dictionary[String]], Unit]
+    type DataCallback = js.Function1[js.Object, Unit]
+    type CallbackType = js.Function2[String, DataCallback, Unit] | js.Function2[String, ResponseCallback, Unit]
 
     d3.queue()
-      .defer(d3.json, WORLD_COUNTRIES)
-      .defer(d3.tsv, WORLD_POPULATION)
+      .defer(callJSON.asInstanceOf[CallbackType], WORLD_COUNTRIES)
+      .defer(callTSV.asInstanceOf[CallbackType], WORLD_POPULATION)
       .await((error: js.Any, dataObj: js.Object, populationObj: js.Object) => {
         var data = dataObj.asInstanceOf[CountryStruct]
         var population = populationObj.asInstanceOf[js.Array[js.Dictionary[String]]]
