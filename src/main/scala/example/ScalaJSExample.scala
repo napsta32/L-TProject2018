@@ -107,13 +107,13 @@ object ScalaJSExample {
           .enter().append("path")
           .attr("d", path)
           .style("fill", function(d) { return color(populationById[d.id]); })
-          .style('stroke', 'white')
-        .style('stroke-width', 1.5)
+          .style("stroke", "white")
+        .style("stroke-width", 1.5)
         .style("opacity",0.8)
           // tooltips
           .style("stroke","white")
-          .style('stroke-width', 0.3)
-        .on('mouseover',function(d){
+          .style("stroke-width", 0.3)
+        .on("mouseover",function(d){
           tip.show(d);
 
           d3.select(this)
@@ -121,7 +121,7 @@ object ScalaJSExample {
             .style("stroke","white")
             .style("stroke-width",3);
         })
-        .on('mouseout', function(d){
+        .on("mouseout", function(d){
           tip.hide(d);
 
           d3.select(this)
