@@ -1,13 +1,10 @@
 package example
 
-import com.sun.org.apache.xalan.internal.utils.FeatureManager.Feature
 import d3v4._
-import org.scalajs.dom.EventTarget
 
 import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
-import scala.scalajs.js.{Dictionary, Tuple2}
 
 object ScalaJSExample {
 
@@ -71,7 +68,7 @@ object ScalaJSExample {
       .range(js.Array("rgb(247,251,255)", "rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)",
         "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)"))
 
-    var path = d3.geoPath()
+    // var path = d3.geoPath()
 
     var svg = d3.select("body")
       .append("svg")
@@ -91,16 +88,16 @@ object ScalaJSExample {
     d3.queue()
       .defer(d3.json, WORLD_COUNTRIES)
       .defer(d3.tsv, WORLD_POPULATION)
-      .await((error: js.Any, args: js.Object*) => {
-        var data = args(0).asInstanceOf[CountryStruct]
-        var population = args(1).asInstanceOf[js.Array[js.Dictionary[String]]]
+      .await((error: js.Any, dataObj: js.Object, populationObj: js.Object) => {
+        var data = dataObj.asInstanceOf[CountryStruct]
+        var population = populationObj.asInstanceOf[js.Array[js.Dictionary[String]]]
 
-        var populationById = js.Dictionary[String]
+        var populationById = js.Dictionary[String]()
 
         population.foreach((d: js.Dictionary[String]) => {
-          populationById.asInstanceOf[js.Dictionary[String]].update(d.get("id").get, d.get("population").get)
+          populationById.update(d.get("id").get, d.get("population").get)
         })
-        data.features.map(d => populationById.asInstanceOf[js.Dictionary[String]].get("id"))
+        data.features.map(d => populationById.get("id"))
 
         svg.append("g")
           .attr("class", "countries")
@@ -108,7 +105,7 @@ object ScalaJSExample {
           .data(data.features)
           .enter().append("path")
           .attr("d", "path")
-          .style("fill", (d: js.Object) => { color(populationById.asInstanceOf[js.Dictionary[String]].get(d.asInstanceOf[Feature].id))})
+          .style("fill", (d: js.Object) => { color(populationById.get(d.asInstanceOf[Feature].id))})
           .style("stroke", "white")
         .style("stroke-width", "1.5")
         .style("opacity","0.8")
@@ -121,7 +118,7 @@ object ScalaJSExample {
           d3.select("body")
             .style("opacity", "1")
             .style("stroke","white")
-            .style("stroke-width","3");
+            .style("stroke-width","3")
         })
         .on("mouseout", () => {
           d3.tip().hide()
@@ -129,14 +126,14 @@ object ScalaJSExample {
           d3.select("body")
             .style("opacity", "0.8")
             .style("stroke","white")
-            .style("stroke-width","0.3");
-        });
+            .style("stroke-width","0.3")
+        })
 
-        svg.append("path")
+        /** svg.append("path")
           .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
           // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
           .attr("class", "names")
-          .attr("d", "path")
+          .attr("d", "path") */
       })
 
     }

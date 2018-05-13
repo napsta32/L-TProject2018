@@ -22,7 +22,7 @@ trait GeoPath extends js.Object {
   def measure(): Double = js.native
   def centroid(): js.Tuple2[Double, Double] = js.native
   def projection(): Projection = js.native
-  def projection(newProjection: Projection): GeoPath = js.native
+  def projection(newProjection: Projection): this.type = js.native
 
 }
 

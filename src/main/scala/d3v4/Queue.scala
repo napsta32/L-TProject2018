@@ -17,5 +17,6 @@ trait D3Queue extends js.Object {
   // def defer(callback: (String, js.Function1[js.Object, Unit]) => Unit, args: Primitive*): this.type = js.native
   // def defer(callback: (String, (js.Any, js.Array[js.Dictionary[String]]) => Unit) => Unit, args: Primitive*): this.type = js.native
   def abort(): this.type = js.native;
-  def await(callback: (js.Any, js.Object*) => Unit): this.type = js.native
+  def await(callback: js.Function2[js.Any, js.Object, Unit]): this.type = js.native
+  def await(callback: js.Function3[js.Any, js.Object, js.Object, Unit]): this.type = js.native
 }
