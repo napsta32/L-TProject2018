@@ -1,9 +1,12 @@
 package example
 
 import d3v4._
+import org.scalajs.dom.EventTarget
 
+import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+import scala.scalajs.js.{Tuple2}
 
 object ScalaJSExample {
 
@@ -15,60 +18,92 @@ object ScalaJSExample {
     d3.range(0, d.value, step).map((v: Double) => js.Dictionary("value" -> v, "angle" -> (v * k + d.startAngle)))
   }
 
+  def htmlGen(d)= {
+    return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Population: </strong><span class='details'>" + format(d.population) +"</span>"
+  }
+
   @JSExport
   def main(args: Array[String]): Unit = {
-    val matrix = js.Array[js.Array[Double]](
-      js.Array(11975,  5871, 8916, 2868),
-      js.Array(1951, 10048, 2060, 6171),
-      js.Array(8010, 16145, 8090, 8045),
-      js.Array(1013,   990,  940, 6907)
-    )
+    var format = d3.format(",")
 
-    import d3v4.d3
-    val svg = d3.select("svg")
-    val width = svg.attr("width").toDouble
-    val height = svg.attr("height").toDouble
-    val outerRadius = Math.min(width, height) * 0.5 - 40
-    val innerRadius = outerRadius - 30
+    // Set tooltips
+    var tip = d3.tip()
+      .attr("class", "d3-tip")
+    .offset(js.Tuple2(-10, 0))
+    .html(htmlGen)
 
-    val formatValue = d3.formatPrefix(",.0", 1e3)
+    var margin = {top: 0, right: 0, bottom: 0, left: 0}
+    var width = 960 - margin.left - margin.right
+    var height = 500 - margin.top - margin.bottom;
 
-    val chord = d3.chord().padAngle(0.05).sortSubgroups(d3.descending)
+    var color = d3.scaleThreshold()
+      .domain(js.Array(10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000))
+    .range(js.Array("rgb(247,251,255)", "rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)",
+                      "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)"))
 
-    val arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius)
+    var path = d3.geoPath()
 
-    val ribbon = d3.ribbon().radius(innerRadius)
+    var svg = d3.select("body")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("class", "map")
 
-    val color = d3.scaleOrdinal[Int, String]().domain(d3.range(4)).range(js.Array("#000000", "#FFDD89", "#957244", "#F26223"))
+    var projection = d3.geoMercator()
+      .scale(130)
+      .translate( js.Tuple2(width / 2, height / 1.5) )
 
-    val g: Selection[ChordArray] = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")").datum(chord(matrix))
+    var path = d3.geoPath().projection(projection)
 
-    val group = g.append("g").attr("class", "groups")
-      .selectAll("g")
-      .data((c: ChordArray) => c.groups)
-      .enter().append("g")
+    svg.call(tip)
 
-    group.append("path").style("fill", (d: ChordGroup) => color(d.index))
-      .style("stroke", (d: ChordGroup) => d3.rgb(color(d.index)).darker())
-      .attr("d", (x: ChordGroup) => arc(x))
+    d3.queue()
+      .defer(d3.json, "world_countries.json")
+      .defer(d3.tsv, "world_population.tsv")
+      .await(ready);
 
-    var groupTick = group.selectAll(".group-tick").data((d: ChordGroup) => groupTicks(d, 1e3))
-      .enter().append("g").attr("class", "group-tick")
-      .attr("transform", (d: js.Dictionary[Double]) =>  "rotate(" + (d("angle") * 180 / Math.PI - 90) + ") translate(" + outerRadius + ",0)")
+    function ready(error, data, population) {
+      var populationById = {};
 
-    groupTick.append("line").attr("x2", 6)
+      population.forEach(function(d) { populationById[d.id] = +d.population; });
+      data.features.forEach(function(d) { d.population = populationById[d.id] });
 
-    groupTick.filter((d: js.Dictionary[Double]) => d("value") % 5e3 == 0).append("text")
-      .attr("x", 8)
-      .attr("dy", ".35em")
-      .attr("transform", (d: js.Dictionary[Double]) => if(d("angle") > Math.PI) "rotate(180) translate(-16)" else null)
-      .style("text-anchor", (d: js.Dictionary[Double]) => if(d("angle") > Math.PI) "end" else null)
-      .text((d: js.Dictionary[Double]) => formatValue(d("value")))
+      svg.append("g")
+        .attr("class", "countries")
+        .selectAll("path")
+        .data(data.features)
+        .enter().append("path")
+        .attr("d", path)
+        .style("fill", function(d) { return color(populationById[d.id]); })
+        .style('stroke', 'white')
+      .style('stroke-width', 1.5)
+      .style("opacity",0.8)
+        // tooltips
+        .style("stroke","white")
+        .style('stroke-width', 0.3)
+      .on('mouseover',function(d){
+        tip.show(d);
 
-    g.append("g").attr("class", "ribbons").selectAll("path").data((c: ChordArray) => c)
-      .enter().append("path")
-      .attr("d", (d: Chord) => ribbon(d))
-      .style("fill", (d: Chord) => color(d.target.index))
-      .style("stroke", (d: Chord) => d3.rgb(color(d.target.index)).darker())
-  }
+        d3.select(this)
+          .style("opacity", 1)
+          .style("stroke","white")
+          .style("stroke-width",3);
+      })
+      .on('mouseout', function(d){
+        tip.hide(d);
+
+        d3.select(this)
+          .style("opacity", 0.8)
+          .style("stroke","white")
+          .style("stroke-width",0.3);
+      });
+
+      svg.append("path")
+        .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
+        // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
+        .attr("class", "names")
+        .attr("d", path);
+    }
 }
+
