@@ -29,6 +29,6 @@ trait Tip extends js.Object {
   def offset(value: js.Tuple2[Double, Double]): this.type = js.native
   def html(): String = js.native
   def html(value: String): this.type = js.native
-  def html(value: js.Function1[js.Object, String]): this.type = js.native
+  def html(value: js.Function1[js.Object, String]): js.Function = js.native
   def destroy(): this.type = js.native
 }
