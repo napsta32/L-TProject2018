@@ -9,5 +9,8 @@ import scala.scalajs.js.annotation._
 @JSImport("d3-format", JSImport.Namespace)
 @js.native
 object d3format extends js.Object {
+
   def formatPrefix(specifier: String, value: Double): js.Function1[Double, String] = js.native
+  def format(specifier: String): js.Function1[Double, String] = js.native
+
 }

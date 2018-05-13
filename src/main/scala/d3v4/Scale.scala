@@ -12,6 +12,7 @@ object d3scale extends js.Object {
   def scaleLinear(): LinearScale = js.native
   def scaleLog(): LogScale = js.native
   def scaleTime(): TimeScale = js.native
+  def scaleThreshold(): ThresholdScale = js.native
   def scaleOrdinal[In, Out](): OrdinalScale[In, Out] = js.native
   def scaleOrdinal[In, Out](values: js.Array[Out]): OrdinalScale[In, Out] = js.native
   def schemeCategory10: js.Array[String] = js.native
@@ -51,4 +52,12 @@ trait OrdinalScale[In, Out] extends js.Object {
   def domain(values: js.Array[In]): this.type = js.native
   def apply(string: In): Out = js.native
   def range(range: js.Array[Out]): this.type = js.native
+}
+
+@js.native
+trait ThresholdScale extends js.Object {
+  def scale(k: Double): this.type = js.native
+  def domain(values: js.Array[Int]): this.type = js.native
+  def range(range: js.Array[Primitive]): this.type = js.native
+  def copy(): this.type = js.native
 }

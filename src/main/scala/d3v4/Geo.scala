@@ -4,7 +4,7 @@ import scalajs.js
 import scalajs.js.{undefined, `|`}
 import scala.scalajs.js.annotation._
 
-// https://github.com/d3/d3-axis
+// https://github.com/d3/d3-geo
 
 @JSImport("d3-geo", JSImport.Namespace)
 @js.native
