@@ -110,11 +110,11 @@ object ScalaJSExample {
           .attr("d", "path")
           .style("fill", function(d) { return color(populationById[d.id]); })
           .style("stroke", "white")
-        .style("stroke-width", 1.5)
-        .style("opacity",0.8)
+        .style("stroke-width", "1.5")
+        .style("opacity","0.8")
           // tooltips
           .style("stroke","white")
-          .style("stroke-width", 0.3)
+          .style("stroke-width", "0.3")
         .on("mouseover",() => {
           d3.tip().hide()
 
