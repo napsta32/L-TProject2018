@@ -4,6 +4,7 @@ import d3v4._
 
 import scala.language.implicitConversions
 import scala.scalajs.js
+import scala.scalajs.js.UndefOr
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
 object ScalaJSExample {
@@ -63,8 +64,8 @@ object ScalaJSExample {
     var width = 960 - margin.left - margin.right
     var height = 500 - margin.top - margin.bottom;
 
-    var color = d3.scaleThreshold()
-      .domain(js.Array(10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000))
+    var customColor: ThresholdScale[Primitive, Primitive] = d3.scaleThreshold()
+      .domain(js.Array[Primitive](10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000))
       .range(js.Array("rgb(247,251,255)", "rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)",
         "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)"))
 
@@ -99,16 +100,18 @@ object ScalaJSExample {
         })
         data.features.map(d => populationById.get("id"))
 
-        svg.append("g")
+        var getColor: (Feature, Int, UndefOr[Int]) => Primitive = (d: Feature, _: Int, _: UndefOr[Int]) => customColor(populationById.get(d.id))
+
+        var x = svg.append("g")
           .attr("class", "countries")
           .selectAll("path")
           .data(data.features)
           .enter().append("path")
           .attr("d", "path")
-          .style("fill", (d: js.Object) => { color(populationById.get(d.asInstanceOf[Feature].id))})
+          .style("fill", getColor)
           .style("stroke", "white")
-        .style("stroke-width", "1.5")
-        .style("opacity","0.8")
+          .style("stroke-width", "1.5")
+          .style("opacity","0.8")
           // tooltips
           .style("stroke","white")
           .style("stroke-width", "0.3")
