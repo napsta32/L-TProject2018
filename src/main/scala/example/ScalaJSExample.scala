@@ -87,16 +87,18 @@ object ScalaJSExample {
 
     // svg.call(tip)
 
-    var callJSON: (String, js.Function1[js.Object, Unit]) => Unit = d3.json
-    var callTSV: (String, js.Function2[js.Any, js.Array[js.Dictionary[String]], Unit]) => Unit = d3.tsv
-
     type ResponseCallback = js.Function2[js.Any, js.Array[js.Dictionary[String]], Unit]
     type DataCallback = js.Function1[js.Object, Unit]
-    type CallbackType = js.Function2[String, DataCallback, Unit] | js.Function2[String, ResponseCallback, Unit]
+    type JSONCallback = js.Function2[String, DataCallback, Unit]
+    type RequestCallback = js.Function2[String, ResponseCallback, Unit]
+    type CallbackType = JSONCallback | RequestCallback
+
+    var callJSON: JSONCallback = d3.json
+    var callTSV: RequestCallback = d3.tsv
 
     d3.queue()
-      .defer(callJSON.asInstanceOf[CallbackType], WORLD_COUNTRIES)
-      .defer(callTSV.asInstanceOf[CallbackType], WORLD_POPULATION)
+      .defer(callJSON, WORLD_COUNTRIES)
+      .defer(callTSV, WORLD_POPULATION)
       .await((error: js.Any, dataObj: js.Object, populationObj: js.Object) => {
         var data = dataObj.asInstanceOf[CountryStruct]
         var population = populationObj.asInstanceOf[js.Array[js.Dictionary[String]]]
