@@ -14,9 +14,22 @@ object ScalaJSExample {
   val WORLD_POPULATION: Primitive = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_population.tsv"
 
   @js.native
+  trait Polygon extends js.Object {
+    def coordinates: js.Array[js.Array[js.Tuple2[Double, Double]]]
+  }
+
+  @js.native
+  trait Feature extends js.Object {
+    def properties: js.Dictionary[String]
+    def id: String
+    def geometry: Polygon
+  }
+
+  @js.native
   trait CountryStruct extends js.Object {
-    def properties: Dictionary[String]
+    def properties: js.Dictionary[String]
     def population: Double
+    def features: js.Array[Feature]
   }
 
   @JSExportTopLevel("myproject")
