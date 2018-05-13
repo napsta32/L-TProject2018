@@ -1,7 +1,7 @@
 package d3v4
 
 import scalajs.js
-import scalajs.js.{undefined, `|`}
+import scalajs.js.{UndefOr, `|`, undefined}
 import scala.scalajs.js.annotation._
 import org.scalajs.dom
 
@@ -71,16 +71,20 @@ trait BaseDom[Datum, T <: BaseDom[Datum, T]] extends js.Object {
   type DatumFunction[M]=js.Function3[Datum, Int, js.UndefOr[Int], M]
 
   def style(name: String, value: String): T = js.native
+  // def style(name: String, value: Datum => Primitive): T = js.native
+  // def style(name: String, value: Datum => js.Object): T = js.native
   def style(name: String, value: DatumFunction[Primitive]): T = js.native
 
   def attr(name: String): String = js.native
   def attr(name: String, value: Primitive): T = js.native
+  def attr(name: String, value: js.Object): T = js.native
   def attr[R](name: String, value: DatumFunction[Primitive]): T = js.native
 
   def text(): String = js.native
   def text(value: String): T = js.native
   def text[R](value: ValueFunction0[R]): T = js.native
-  def text[R](value: ValueFunction1[R]): T = js.native
+  // Already included in next definition (ValueFunction2)
+  // def text[R](value: ValueFunction1[R]): T = js.native
   def text[R](value: ValueFunction2[R]): T = js.native
 
   def html(): String = js.native
@@ -90,6 +94,7 @@ trait BaseDom[Datum, T <: BaseDom[Datum, T]] extends js.Object {
 
   def call(func: js.Function, args: js.Any*): T = js.native
   def remove(): T = js.native
+
 }
 
 @js.native
@@ -115,3 +120,4 @@ trait Enter[Datum] extends js.Object {
 
   def size():Int = js.native
 }
+

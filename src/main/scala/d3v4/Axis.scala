@@ -10,6 +10,9 @@ import scala.scalajs.js.annotation._
 @js.native
 object d3axis extends js.Object {
   def axisBottom(scale: Scale): AxisGenerator = js.native
+  def axisLeft(scale: Scale): AxisGenerator = js.native
+  def axisRight(scale: Scale): AxisGenerator = js.native
+  def axisTop(scale: Scale): AxisGenerator = js.native
 }
 
 @js.native

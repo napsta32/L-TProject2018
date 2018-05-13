@@ -16,4 +16,13 @@ object d3array extends js.Object {
   def range(stop: Double): js.Array[Double] = js.native
   def range(start: Double, stop: Double): js.Array[Double] = js.native
   def range(start: Double, stop: Double, step: Double): js.Array[Double] = js.native
+
+  def extent[Comparable, V](values: js.Array[V]): js.Tuple2[Comparable, Comparable] = js.native
+  def extent[Comparable, V](values: js.Array[V], valueOf: (V, Int, js.Array[V]) => Comparable): js.Tuple2[Comparable, Comparable] = js.native
+
+  def max[Comparable, V](values: js.Array[V]): Comparable = js.native
+  def max[Comparable, V](values: js.Array[V], valueOf: (V, Int, js.Array[V]) => Comparable): Comparable = js.native
+
+  def min[Comparable, V](values: js.Array[V]): Comparable = js.native
+  def min[Comparable, V](values: js.Array[V], valueOf: (V, Int, js.Array[V]) => Comparable): Comparable = js.native
 }

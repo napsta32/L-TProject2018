@@ -4,6 +4,7 @@ import scala.scalajs.js.annotation._
 import org.scalajs.dom
 
 package d3v4 {
+
   object d3
 
   @js.native
@@ -60,6 +61,8 @@ package object d3v4 {
   implicit def d3toD3Selection(d3t: d3.type): d3selection.type = d3selection
   implicit def d3toD3Shape(d3t: d3.type): d3shape.type = d3shape
   implicit def d3toD3Time(d3t: d3.type): d3time.type = d3time
+  implicit def d3toD3Request(d3t: d3.type): d3request.type = d3request
+  implicit def d3toD3TimeFormat(d3t: d3.type): d3timeformat.type = d3timeformat
   implicit def d3toD3Quadtree(d3t: d3.type): d3quadtree.type = d3quadtree
   implicit def d3toD3Zoom(d3t: d3.type): d3zoom.type = d3zoom
   implicit def d3toD3Format(d3t: d3.type): d3format.type = d3format
