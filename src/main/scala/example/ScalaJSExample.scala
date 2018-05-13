@@ -100,7 +100,7 @@ object ScalaJSExample {
         population.foreach((d: js.Dictionary[String]) => {
           populationById.asInstanceOf[js.Dictionary[String]].update(d.get("id").get, d.get("population").get)
         })
-        data.features.foreach((d: Feature) => { d.population = populationById.asInstanceOf[js.Dictionary[String]].get("id") })
+        data.features.map(d => populationById.asInstanceOf[js.Dictionary[String]].get("id"))
 
         svg.append("g")
           .attr("class", "countries")
