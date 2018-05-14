@@ -120,32 +120,31 @@ object ScalaJSExample {
           } else customColor(populationById.get(d.id).get)
         }
 
-        svg.append("g")
-          .attr("class", "countries")
+        var last_country = svg.append("g")
+            .attr("class", "countries")
           .selectAll("path")
-          .data(data.features)
-          .enter().append("path")
-          .attr("d", path)
-          .style("fill", getColor)
+            .data(data.features)
+          .enter()
+            .append("path").attr("d", path)
           // .style("stroke", "white")
           // .style("stroke-width", "1.5")
           // .style("opacity","1")
-          .style("stroke","white")
-          .style("stroke-width", "0.3")
+        last_country.style("fill", getColor).style("stroke","white")
+            .style("stroke-width", "0.3")
           // tooltips
           .on("mouseover",(d: Feature) => {
-              tip.show(d)
+              // tip.show(d)
 
-              d3.select("body")
+              d3.select(last_country.node())
                 .style("opacity", "1")
                 .style("stroke","white")
                 .style("stroke-width","3")
               ()
             })
             .on("mouseout", (d: Feature) => {
-              tip.hide(d)
+              // tip.hide(d)
 
-              d3.select("body")
+              d3.select(last_country.node())
                 .style("opacity", "0.8")
                 .style("stroke","white")
                 .style("stroke-width","0.3")
