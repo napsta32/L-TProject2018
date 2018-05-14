@@ -45,7 +45,7 @@ object WorldPopulation {
   }
 
   // @JSExport
-  def main2(args: Array[String]): Unit = {
+  def main2 (args: Array[String]): Unit = {
     case class Margin(left: Int, right: Int, top: Int, bottom: Int)
 
     var format = d3.format(",")
