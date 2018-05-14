@@ -1,20 +1,17 @@
 package d3v4
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.JSImport
+import scala.scalajs.js.annotation.{JSGlobal, JSImport}
 
 // https://github.com/d3/d3-axis
 
-@JSImport("d3-tip", JSImport.Namespace)
+@JSImport("d3-tip", JSImport.Default)
 @js.native
-object d3tip extends js.Object {
-  def tip(): Tip = js.native
-}
-
-@js.native
-trait Tip extends js.Object {
+class d3tip() extends js.Object {
   def show(): this.type = js.native
+  def show[Datum](d: Datum): this.type = js.native
   def hide(): this.type = js.native
+  def hide[Datum](d: Datum): this.type = js.native
   def attr(name: String, value: Primitive): this.type = js.native
   def style(name: String, value: Primitive): this.type = js.native
   // Public: Set or get the direction of the tooltip

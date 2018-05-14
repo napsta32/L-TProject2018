@@ -1,6 +1,7 @@
 package example
 
 import d3v4._
+import d3tip._
 import topojson.topojson
 
 import scala.language.implicitConversions
@@ -30,7 +31,7 @@ object ScalaJSExample {
   @js.native
   trait CountryStruct extends js.Object {
     def properties: js.Dictionary[String]
-    def population: Double
+    def population: Primitive
     def features: js.Array[Feature]
   }
 
@@ -57,10 +58,10 @@ object ScalaJSExample {
     }
 
     // Set tooltips
-    /*var tip = d3.tip()
+    var tip = d3.tip()
       .attr("class", "d3-tip")
       .offset(js.Tuple2(-10, 0))
-      .html(htmlGen)*/
+      .html(htmlGen)
 
     var margin = Margin(top = 0, right = 0, bottom = 0, left = 0)
     var width = 960 - margin.left - margin.right
@@ -119,42 +120,50 @@ object ScalaJSExample {
           } else customColor(populationById.get(d.id).get)
         }
 
-        svg.append("g")
+        var tooltips = svg.append("g")
           .attr("class", "countries")
           .selectAll("path")
           .data(data.features)
           .enter().append("path")
           .attr("d", path)
           .style("fill", getColor)
-          .style("stroke", "white")
-          .style("stroke-width", "1.5")
-          .style("opacity","0.8")
-          // tooltips
+          // .style("stroke", "white")
+          // .style("stroke-width", "1.5")
+          // .style("opacity","1")
           .style("stroke","white")
           .style("stroke-width", "0.3")
-        .on("mouseover",() => {
-          d3.tip().hide()
+          // tooltips
+        tooltips.on("mouseover",(d: Feature) => {
+              // d3.tip().show(d)
 
-          d3.select("body")
-            .style("opacity", "1")
-            .style("stroke","white")
-            .style("stroke-width","3")
-        })
-        .on("mouseout", () => {
-          d3.tip().hide()
+              d3.select("body")
+                .style("opacity", "1")
+                .style("stroke","white")
+                .style("stroke-width","3")
+              ()
+            })
+            .on("mouseout", (d: Feature) => {
+              // d3.tip().hide(d)
 
-          d3.select("body")
-            .style("opacity", "0.8")
-            .style("stroke","white")
-            .style("stroke-width","0.3")
-        })
+              d3.select("body")
+                .style("opacity", "0.8")
+                .style("stroke","white")
+                .style("stroke-width","0.3")
+              ()
+            })
+
+        // Unselect
+        d3.select("body")
+          .style("opacity", "0.8")
+          .style("stroke","white")
+          .style("stroke-width","0.3")
 
         var meshFunction: (Feature, Feature) => Primitive = (a: Feature, b: Feature) => a.id != b.id
         svg.append("path")
           .datum(topojson.mesh[Feature](data.features, meshFunction))
           // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
           .attr("class", "names")
-          .attr("d", "path")
+          .attr("d", path)
       })
 
     }

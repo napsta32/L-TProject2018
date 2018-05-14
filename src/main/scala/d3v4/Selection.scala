@@ -23,7 +23,7 @@ trait BaseSelection[Datum, T <: BaseSelection[Datum, T]] extends BaseDom[Datum, 
 
   def on(typenames: String, listener: ListenerFunction0): T = js.native
   def on(typenames: String, listener: ListenerFunction1): T = js.native
-  def on(typenames: String, listener: ListenerFunction2): T = js.native
+  // def on(typenames: String, listener: ListenerFunction2): T = js.native
 
   def datum(): Datum = js.native
   def datum[NewDatum](data: NewDatum): Selection[NewDatum] = js.native

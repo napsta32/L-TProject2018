@@ -5,7 +5,10 @@ import org.scalajs.dom
 
 package d3v4 {
 
-  object d3
+  object d3 {
+    val myTip: d3tip = new d3tip()
+    def tip(): d3tip = myTip
+  }
 
   @js.native
   trait BaseEvent extends js.Object {
@@ -61,7 +64,7 @@ package object d3v4 {
   implicit def d3toD3Scale(d3t: d3.type): d3scale.type = d3scale
   implicit def d3toD3Selection(d3t: d3.type): d3selection.type = d3selection
   implicit def d3toD3Shape(d3t: d3.type): d3shape.type = d3shape
-  implicit def d3toD3Tip(d3t: d3.type): d3tip.type = d3tip
+  // def tip(): d3tip.type = d3tip
   implicit def d3toD3Time(d3t: d3.type): d3time.type = d3time
   implicit def d3toD3Queue(d3t: d3.type): d3queue.type = d3queue
   implicit def d3toD3Request(d3t: d3.type): d3request.type = d3request
