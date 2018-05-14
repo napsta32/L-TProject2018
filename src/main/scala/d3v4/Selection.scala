@@ -99,10 +99,17 @@ trait BaseDom[Datum, T <: BaseDom[Datum, T]] extends js.Object {
 }
 
 @js.native
+trait Node extends dom.EventTarget {
+  val `__data__`: js.Object = js.native
+}
+
+@js.native
 trait Selection[Datum] extends BaseSelection[Datum, Selection[Datum]] {
   def select[SelData](selector: String): Selection[SelData] = js.native
   def selectAll[SelData](selector: String): Selection[SelData] = js.native
   def node(): dom.EventTarget = js.native
+  def each(callback: js.Function): this.type = js.native
+  def nodes(): js.Array[Node] = js.native
 }
 
 @js.native
@@ -120,5 +127,6 @@ trait Enter[Datum] extends js.Object {
   def append(name: js.Function3[Datum, Double, Double, dom.EventTarget]): Selection[Datum] = js.native
 
   def size():Int = js.native
+  def each(callback: js.Function): this.type = js.native
 }
 

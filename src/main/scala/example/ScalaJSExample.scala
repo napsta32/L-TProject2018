@@ -1,6 +1,8 @@
 package example
 
 import d3v4._
+import org.scalajs.dom
+import org.scalajs.dom.raw.EventTarget
 import topojson.topojson
 
 import scala.language.implicitConversions
@@ -49,7 +51,7 @@ object ScalaJSExample {
     var format = d3.format(",")
 
     var htmlGen = (dobj: js.Object) => {
-      var d = dobj.asInstanceOf[CountryStruct]
+      var d = dobj.asInstanceOf[Feature]
       "<strong>Country: </strong><span class='details'>" +
           d.properties.get("name") + "<br></span>" +
           "<strong>Population: </strong><span class='details'>" +
@@ -119,33 +121,38 @@ object ScalaJSExample {
           } else customColor(populationById.get(d.id).get)
         }
 
-        var last_country = svg.append("g")
+        var countries = svg.append("g")
             .attr("class", "countries")
           .selectAll("path")
             .data(data.features)
           .enter()
             .append("path").attr("d", path)
-          // .style("stroke", "white")
+        // println(JSON.stringify(last_country.nodes()))
+
+        var nodes = js.Dictionary[Node]()
+        countries.nodes().foreach(e => {
+          val f = e.`__data__`.asInstanceOf[Feature]
+          nodes.update(f.id, e)
+        })
+            //.style("stroke", "green")
           // .style("stroke-width", "1.5")
           // .style("opacity","1")
-        last_country.style("fill", getColor).style("stroke","white")
+        countries.style("fill", getColor).style("stroke", "white")
             .style("stroke-width", "0.3")
           // tooltips
-          .on("mouseover",(d: Feature) => {
-              // tip.show(d)
-
-              d3.select(last_country.node())
+        countries.on("mouseover",(d: Feature) => {
+              tip.show(d)
+              d3.select(nodes.get(d.id).get)
                 .style("opacity", "1")
                 .style("stroke","white")
                 .style("stroke-width","3")
               ()
             })
             .on("mouseout", (d: Feature) => {
-              // tip.hide(d)
-
-              d3.select(last_country.node())
+              tip.hide(nodes.get(d.id).get.`__data__`)
+              d3.select(nodes.get(d.id).get)
                 .style("opacity", "0.8")
-                .style("stroke","white")
+                //.style("stroke","white")
                 .style("stroke-width","0.3")
               ()
             })
@@ -153,7 +160,7 @@ object ScalaJSExample {
         // Unselect
         d3.select("body")
           .style("opacity", "0.8")
-          .style("stroke","white")
+          // .style("stroke","white")
           .style("stroke-width","0.3")
 
         var meshFunction: (Feature, Feature) => Primitive = (a: Feature, b: Feature) => a.id != b.id
