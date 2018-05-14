@@ -1,7 +1,6 @@
 package example
 
 import d3v4._
-import d3tip._
 import topojson.topojson
 
 import scala.language.implicitConversions
