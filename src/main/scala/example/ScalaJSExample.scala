@@ -67,7 +67,7 @@ object ScalaJSExample {
 
     var zoom = d3.zoom()
       .scaleExtent(js.Array[Double](2048,16384))
-    .on("zoom",  z);
+      .on("zoom",  z);
 
     var svg = d3.select("svg")
       .attr("width", width)
