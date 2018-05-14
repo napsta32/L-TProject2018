@@ -6,8 +6,7 @@ import org.scalajs.dom
 package d3v4 {
 
   object d3 {
-    val myTip: d3tip = new d3tip()
-    def tip(): d3tip = myTip
+    def tip(): d3tip = new d3tip()
   }
 
   @js.native

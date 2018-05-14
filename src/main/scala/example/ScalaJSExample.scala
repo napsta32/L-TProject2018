@@ -25,7 +25,7 @@ object ScalaJSExample {
     def properties: js.Dictionary[String]
     def id: String
     def geometry: Polygon
-    def population : Double
+    def population : Primitive
   }
 
   @js.native
@@ -65,7 +65,7 @@ object ScalaJSExample {
 
     var margin = Margin(top = 0, right = 0, bottom = 0, left = 0)
     var width = 960 - margin.left - margin.right
-    var height = 500 - margin.top - margin.bottom;
+    var height = 500 - margin.top - margin.bottom
 
     var customColor: ThresholdScale[Primitive, Primitive] = d3.scaleThreshold()
       .domain(js.Array[Primitive](10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000))
@@ -87,7 +87,7 @@ object ScalaJSExample {
 
     var path = d3.geoPath().projection(projection)
 
-    // svg.call(tip)
+    svg.call(tip)
 
     type ResponseCallback = js.Function2[js.Any, js.Array[js.Dictionary[String]], Unit]
     type DataCallback = js.Function1[js.Object, Unit]
@@ -120,7 +120,7 @@ object ScalaJSExample {
           } else customColor(populationById.get(d.id).get)
         }
 
-        var tooltips = svg.append("g")
+        svg.append("g")
           .attr("class", "countries")
           .selectAll("path")
           .data(data.features)
@@ -133,8 +133,8 @@ object ScalaJSExample {
           .style("stroke","white")
           .style("stroke-width", "0.3")
           // tooltips
-        tooltips.on("mouseover",(d: Feature) => {
-              // d3.tip().show(d)
+          .on("mouseover",(d: Feature) => {
+              tip.show(d)
 
               d3.select("body")
                 .style("opacity", "1")
@@ -143,7 +143,7 @@ object ScalaJSExample {
               ()
             })
             .on("mouseout", (d: Feature) => {
-              // d3.tip().hide(d)
+              tip.hide(d)
 
               d3.select("body")
                 .style("opacity", "0.8")
