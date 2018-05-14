@@ -55,6 +55,7 @@ package object d3v4 {
   implicit def d3toD3Array(d3t: d3.type): d3array.type = d3array
   implicit def d3toD3Color(d3t: d3.type): d3color.type = d3color
   implicit def d3toD3Drag(d3t: d3.type): d3drag.type = d3drag
+  implicit def d3toD3DSV(d3t: d3.type): d3dsv.type = d3dsv
   implicit def d3toD3Force(d3t: d3.type): d3force.type = d3force
   implicit def d3toD3Polygon(d3t: d3.type): d3polygon.type = d3polygon
   implicit def d3toD3Scale(d3t: d3.type): d3scale.type = d3scale

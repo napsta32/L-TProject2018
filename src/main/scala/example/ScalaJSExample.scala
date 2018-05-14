@@ -10,8 +10,9 @@ import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
 object ScalaJSExample {
 
-  var WORLD_COUNTRIES = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_countries.json"
-  var WORLD_POPULATION = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_population.tsv"
+
+  val WORLD_COUNTRIES_URL = "https://s3-eu-west-1.amazonaws.com/languages-and-translators/world_countries.json"
+  val WORLD_POPULATION_URL = "https://s3-eu-west-1.amazonaws.com/languages-and-translators/world_population.tsv"
 
   @js.native
   trait Polygon extends js.Object {
@@ -97,8 +98,8 @@ object ScalaJSExample {
     var callTSV: RequestCallback = d3.tsv
 
     d3.queue()
-      .defer(callJSON, WORLD_COUNTRIES)
-      .defer(callTSV, WORLD_POPULATION)
+      .defer(callJSON, WORLD_COUNTRIES_URL)
+      .defer(callTSV, WORLD_POPULATION_URL)
       .await((error: js.Any, dataObj: js.Object, populationObj: js.Object) => {
         var data = dataObj.asInstanceOf[CountryStruct]
         var population = populationObj.asInstanceOf[js.Array[js.Dictionary[String]]]
