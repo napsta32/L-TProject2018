@@ -21,6 +21,7 @@ npmDependencies in Compile ++= (
   "d3" -> "4.12.2" ::
   "topojson" -> "1" ::
   "d3-tip" -> "0.9.1" ::
+  "d3-tile" -> "0.0" ::
     Nil
   )
 

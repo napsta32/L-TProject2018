@@ -7,6 +7,7 @@ package d3v4 {
 
   object d3 {
     def tip(): d3tip = new d3tip()
+    def tile(): d3tile = new d3tile()
   }
 
   @js.native
