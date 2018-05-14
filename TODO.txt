@@ -40,3 +40,7 @@ Building a good DSL is partially an art. There is therefore no unique result tha
     How easy, elegant and flexible is your DSL ? Have you added new abstractions that were not initially provided by the library ?
     Are you hiding/removing functionalities of the library? Your DSL should not reduce the scope of problems that could be solved using the (part of) library (you chosen) but only provide users with an easier way to achieve specific goals. 
     ls your code clean, well­ indented and documented ? Are the principle of functional programming used when possible (e.g., prefer immutable over mutable state when performances are not a bottleneck) ?
+
+Nice maps:
+http://mbostock.github.io/d3/talk/20111018/force-states.html
+http://mbostock.github.io/d3/talk/20111018/azimuthal.html

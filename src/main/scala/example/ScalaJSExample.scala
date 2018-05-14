@@ -5,7 +5,7 @@ import topojson.topojson
 
 import scala.language.implicitConversions
 import scala.scalajs.js
-import scala.scalajs.js.{UndefOr, |}
+import scala.scalajs.js.{JSON, UndefOr, |}
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
 object ScalaJSExample {
@@ -106,19 +106,25 @@ object ScalaJSExample {
 
         var populationById = js.Dictionary[String]()
 
-        population.foreach((d: js.Dictionary[String]) => {
-          populationById.update(d.get("id").get, d.get("population").get)
-        })
+        population.foreach((d: js.Dictionary[String]) => populationById.update(d.get("id").get, d.get("population").get) )
         data.features.map(d => populationById.get("id"))
 
-        var getColor: (Feature, Int, UndefOr[Int]) => Primitive = (d: Feature, _: Int, _: UndefOr[Int]) => customColor(populationById.get(d.id).get)
+        // population.foreach((d: js.Dictionary[String]) => println(JSON.stringify(d)))
+        // println(JSON.stringify(data))
+
+        var getColor: (Feature, Int, UndefOr[Int]) => Primitive = (d: Feature, _: Int, _: UndefOr[Int]) => {
+          if(!populationById.get(d.id).isDefined) {
+            println("Could not find id " + d.id)
+            null
+          } else customColor(populationById.get(d.id).get)
+        }
 
         svg.append("g")
           .attr("class", "countries")
           .selectAll("path")
           .data(data.features)
           .enter().append("path")
-          .attr("d", "path")
+          .attr("d", path)
           .style("fill", getColor)
           .style("stroke", "white")
           .style("stroke-width", "1.5")
