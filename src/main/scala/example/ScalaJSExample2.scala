@@ -1,4 +1,4 @@
-/*package example
+package example
 
 import d3v4.{ListenerFunction0, _}
 import topojson.topojson
@@ -136,4 +136,3 @@ object ScalaJSExample {
   }
 
 }
-*/
