@@ -83,15 +83,6 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
       .defer(callTSV, WORLD_POPULATION_URL)
       .await((error: js.Any, dataObj: js.Object, populationObj: js.Object) => {
         var data = dataObj.asInstanceOf[CountryStruct]
-        // var population = populationObj.asInstanceOf[js.Array[js.Dictionary[String]]]
-
-        // var populationById = js.Dictionary[String]()
-
-        // population.foreach((d: js.Dictionary[String]) => populationById.update(d.get("id").get, d.get("population").get) )
-        // data.features.map(d => populationById.get("id"))
-
-        // population.foreach((d: js.Dictionary[String]) => println(JSON.stringify(d)))
-        // println(JSON.stringify(data))
 
         var getColor: (Feature, Int, UndefOr[Int]) => Primitive = (d: Feature, _: Int, _: UndefOr[Int]) => {
           /*if(!populationById.get(d.id).isDefined) {
@@ -125,12 +116,6 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
             v(d3.select(nodes.get(d.id).get), d.properties.get("name").get)
           })
         }
-
-        // Unselect
-        d3.select("body")
-          .style("opacity", "0.8")
-          // .style("stroke","white")
-          .style("stroke-width","0.3")
 
         var meshFunction: (Feature, Feature) => Primitive = (a: Feature, b: Feature) => a.id != b.id
         svg.append("path")

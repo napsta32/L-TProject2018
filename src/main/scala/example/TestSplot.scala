@@ -62,7 +62,18 @@ object TestSplot {
 
     g.layers (900, 450) {
       g.worldmap(0, 0, 900, 450) {
-        // Draw map of something
+        /// Code
+        g.setCountryHandler(g.EVENT_MOUSE_OVER, (dom, countryName) => {
+          dom
+            .style("opacity", "1")
+          println(countryName)
+        })
+
+        g.setCountryHandler(g.EVENT_MOUSE_OUT, (dom, countryName) => {
+          dom
+            .style("opacity", "0.8")
+        })
+
       }
     }
 
