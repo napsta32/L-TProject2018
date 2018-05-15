@@ -7,7 +7,7 @@ package splot {
 package object splot {
 
   implicit def splot2layers(layers: g.type): splotlayers.type = splotlayers
-  implicit def splot2chord(chord: g.type): splotchord.type = splotchord
+  implicit def splot2chord(chord: g.type): publicSplotchord.type = publicSplotchord
   implicit def splot2graph(graph: g.type): Graph.type = Graph
   implicit def splot2drawing(drawing: g.type): splotdrawing.type = splotdrawing
 

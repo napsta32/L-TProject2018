@@ -1,14 +1,31 @@
 package splot
 
-class Layers extends Drawing {
+import d3v4.Selection
+import org.scalajs.dom
+import org.scalajs.dom.EventTarget
+
+class Layers(selection: Selection[dom.EventTarget]) extends Drawing {
+
+  private var myLayerCount: Int = 0
+  private var d3Selection: Selection[dom.EventTarget] = selection
 
   override def append(d: Drawing): Drawing = {
-    // TODO:
+    // Deprecated
     this
   }
 
   override def setData[Node, Edge](graph: Graph[Node, Edge]): Drawing = throw new NoSuchElementException("layers.setData")
 
+  override def getSelection[Datum](): Selection[EventTarget] = {
+    Context.addLayer()
+    myLayerCount += 1
+    Context.buildLayerContainer(d3Selection)
+  }
+
+  def destroyLayers(): Unit = {
+    for (i <- 1 to myLayerCount)
+      Context.removeLayer()
+  }
 }
 
 object splotlayers {
@@ -16,7 +33,7 @@ object splotlayers {
   def layers(): (=> Unit) => Unit = layers(400, 400)(_)
   def layers(width: Int, height: Int): (=> Unit) => Unit = layers(0, 0, width, height)(_)
   def layers(x: Int, y: Int, width: Int, height: Int)(body: => Unit): Unit = {
-    var layersObject = new Layers()
+    val layersObject = new Layers(Context.getD3Selection())
 
     Context
       .append(layersObject)

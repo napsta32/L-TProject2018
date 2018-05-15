@@ -29,6 +29,17 @@ object TestSplot {
         // Plot data here
       }
       */
+      g.chord (100, 100, 500, 500) {
+        val data = g.buildGraph(
+          (10: Int, "A" -> "B"),
+          (30: Int, "A" -> "C"),
+          (60: Int, "D" -> "E"),
+          (70: Int, "F" -> "G"),
+          (80: Int, "H" -> "C")
+        )
+
+        g.setData(data)
+      }
       g.chord (100, 100, 200, 200) {
         val data = g.buildGraph (
           (10: Int, "A" -> "B"),
@@ -37,6 +48,7 @@ object TestSplot {
           (70: Int, "F" -> "G"),
           (80: Int, "H" -> "C")
         )
+
         g.setData(data)
         /*
         g.data = g.matrix(g.row(100, 200, 200, 0, 0),
@@ -47,11 +59,7 @@ object TestSplot {
           g.column(100, 200, 200, 0, 0),
           g.column(100, 200, 200, 0, 0),
           g.column(100, 200, 200, 0, 0))
-        g.data = g.flow(1 -> 2 -> 100,
-                        2 -> 1 -> 500,
-                        3 -> 2 -> 200)
                          */
-
       }
     }
 
