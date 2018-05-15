@@ -27,6 +27,13 @@ object Context {
     this
   }
 
+  def setZoom(enabled: Boolean): this.type = {
+    if(contextStack.nonEmpty)
+      contextStack.head.setZoom(enabled)
+    else throw new Exception("Out of context call (setZoom)")
+    this
+  }
+
   def setCountryHandler(eventName: String, handler: (Selection[dom.EventTarget], String) => Unit): this.type = {
     if(contextStack.nonEmpty)
       contextStack.head.setCountryHandler(eventName, handler)

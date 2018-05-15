@@ -33,6 +33,8 @@ class Layers(selection: Selection[dom.EventTarget], x: Int, y: Int, width: Int, 
     throw new NoSuchMethodError("layers.setCountryHandler")
 
   override def setCountryColor(setter: String => String): Drawing = throw new NoSuchMethodError("layers.setCountryColor")
+
+  override def setZoom(enabled: Boolean): Drawing = throw new NoSuchMethodError("layers.setZoom")
 }
 
 object splotlayers {

@@ -144,6 +144,11 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
     countrColorSetter = setter
     this
   }
+
+  override def setZoom(enabled: Boolean): Drawing = {
+    enableZoom = enabled
+    this
+  }
 }
 
 object splotmapfunc {

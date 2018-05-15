@@ -101,6 +101,8 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
     throw new NoSuchMethodError("chord.setCountryHandler")
 
   override def setCountryColor(setter: String => String): Drawing = throw new NoSuchMethodError("chord.setCountryColor")
+
+  override def setZoom(enabled: Boolean): Drawing = throw new NoSuchMethodError("chord.setZoom")
 }
 
 object publicSplotchord {

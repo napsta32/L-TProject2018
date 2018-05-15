@@ -10,6 +10,8 @@ abstract class Drawing {
   def getSelection(): Selection[dom.EventTarget]
   def setValue[T](propName: String, func: () => T): Unit
 
+  def setZoom(enabled: Boolean): Drawing
+
   // worldmap
   def setCountryHandler(eventName: String, handler: (Selection[dom.EventTarget], String) => Unit): Drawing
   def setCountryColor(setter: String => String): Drawing
@@ -28,6 +30,11 @@ object splotdrawing {
     this
   }
   def setValue[T](propName: String, value: T): this.type = setValue(propName, () => value)
+
+  def setZoom(enabled: Boolean): this.type = {
+    Context.setZoom(enabled)
+    this
+  }
 
   def setCountryHandler(eventName: String, handler: (Selection[dom.EventTarget], String) => Unit): this.type = {
     Context.setCountryHandler(eventName, handler)
