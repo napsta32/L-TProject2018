@@ -8,9 +8,12 @@ import org.scalajs.dom.EventTarget
 
 import scala.scalajs.js.UndefOr
 
-class SplotChord(selection: Selection[dom.EventTarget]) extends Drawing {
+class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: Int, height: Int) extends Drawing {
   val d3Selection: Selection[dom.EventTarget] = selection
   var data: Graph[String, Double] = null
+
+  var outerRadiusFunc: () => Double = () => Math.min(width, height) * 0.5 - 40
+  var innerRadiusFunc: () => Double = () => outerRadiusFunc() - 30
 
   override def append(d: Drawing): Drawing = {
     this
@@ -19,6 +22,18 @@ class SplotChord(selection: Selection[dom.EventTarget]) extends Drawing {
   override def setData[Node, Edge](graph: Graph[Node, Edge]): Drawing = {
     this.data = graph.asInstanceOf[Graph[String, Double]]
     this
+  }
+
+  override def setValue[T](propName: String, func: () => T): Unit = {
+    if(func.isInstanceOf[() => Double]) {
+      propName match {
+        case g.CHORD_OUTER_RADIUS => outerRadiusFunc = func.asInstanceOf[() => Double]
+        case g.CHORD_INNER_RADIUS => innerRadiusFunc = func.asInstanceOf[() => Double]
+        case _ => throw new NoSuchFieldError("chord." + propName)
+      }
+    } else {
+      throw new Exception("Invalid type in chord.setValue(" + propName + ")")
+    }
   }
 
   def show(): SplotChord = {
@@ -33,8 +48,8 @@ class SplotChord(selection: Selection[dom.EventTarget]) extends Drawing {
     val svg = d3Selection
     val width = svg.attr("width").toDouble
     val height = svg.attr("height").toDouble
-    val outerRadius = Math.min(width, height) * 0.5 - 40
-    val innerRadius = outerRadius - 30
+    val outerRadius = outerRadiusFunc()
+    val innerRadius = innerRadiusFunc()
 
     val formatValue = d3.formatPrefix(",.0", 1e2)
 
@@ -80,7 +95,7 @@ class SplotChord(selection: Selection[dom.EventTarget]) extends Drawing {
     this
   }
 
-  override def getSelection[Datum](): Selection[EventTarget] = d3Selection
+  override def getSelection(): Selection[EventTarget] = d3Selection
 }
 
 object publicSplotchord {
@@ -88,7 +103,7 @@ object publicSplotchord {
   def chord(): (=> Unit) => Unit = chord(400, 400)(_)
   def chord(width: Int, height: Int): (=> Unit) => Unit = chord(0, 0, width, height)(_)
   def chord(x: Int, y: Int, width: Int, height: Int)(body: => Unit): Unit = {
-    val chordObject = new SplotChord(Context.buildSVG(Context.getD3Selection(), width, height))
+    val chordObject = new SplotChord(Context.buildSVG(Context.getD3Selection(), width, height), x, y, width, height)
 
     Context
       .append(chordObject) // Append to higher order drawing

@@ -16,7 +16,7 @@ class Layers(selection: Selection[dom.EventTarget], x: Int, y: Int, width: Int, 
 
   override def setData[Node, Edge](graph: Graph[Node, Edge]): Drawing = throw new NoSuchElementException("layers.setData")
 
-  override def getSelection[Datum](): Selection[EventTarget] = {
+  override def getSelection(): Selection[EventTarget] = {
     Context.addLayer()
     myLayerCount += 1
     Context.buildLayerContainer(d3Selection, x, y, width, height)
@@ -26,6 +26,8 @@ class Layers(selection: Selection[dom.EventTarget], x: Int, y: Int, width: Int, 
     for (i <- 1 to myLayerCount)
       Context.removeLayer()
   }
+
+  override def setValue[T](propName: String, func: () => T): Unit = throw new NoSuchMethodError("layers.setDouble")
 }
 
 object splotlayers {

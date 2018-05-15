@@ -20,6 +20,13 @@ object Context {
     this
   }
 
+  def setValue[T](propName: String, func: () => T): this.type = {
+    if(contextStack.nonEmpty)
+      contextStack.head.setValue(propName, func)
+    else throw new Exception("Out of context call (setDouble)")
+    this
+  }
+
   def push(drawing: Drawing): this.type = {
     contextStack = drawing :: contextStack
     this

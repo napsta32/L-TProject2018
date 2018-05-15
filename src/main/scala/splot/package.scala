@@ -1,6 +1,9 @@
 package splot {
 
-  object g
+  object g {
+    val CHORD_INNER_RADIUS = "innerRadius"
+    val CHORD_OUTER_RADIUS = "outerRadius"
+  }
 
 }
 

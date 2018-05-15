@@ -39,6 +39,7 @@ object TestSplot {
         )
 
         g.setData(data)
+        g.setValue(g.CHORD_INNER_RADIUS, 12)
       }
       g.chord (100, 100, 200, 200) {
         val data = g.buildGraph (
@@ -50,6 +51,7 @@ object TestSplot {
         )
 
         g.setData(data)
+        // g.setDouble(g.CHORD_INNER_RADIUS, 12)
         /*
         g.data = g.matrix(g.row(100, 200, 200, 0, 0),
           g.row(100, 200, 200, 0, 0),
