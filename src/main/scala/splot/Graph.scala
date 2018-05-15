@@ -111,6 +111,9 @@ abstract class Graph[Node, Edge] {
     concat(f(value, source -> dest), tail.flatMap(f))
   }
 
+  implicit def ++(g1: Graph[Node, Edge])
+                 (implicit node: Monoid[Node], edge: Monoid[Edge]): Graph[Node, Edge] = concat(this, g1)
+
 }
 
 abstract class Matrix[A](_rows: List[List[A]]) {

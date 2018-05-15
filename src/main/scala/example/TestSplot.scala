@@ -37,6 +37,9 @@ object TestSplot {
           (60: Int, "D" -> "E"),
           (70: Int, "F" -> "G"),
           (80: Int, "H" -> "C")
+        ) ++ g.buildGraph(
+          (20: Int, "F" -> "A"),
+          (60: Int, "A" -> "F")
         )
 
         g.setData(data)
