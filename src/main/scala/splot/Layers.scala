@@ -27,7 +27,7 @@ class Layers(selection: Selection[dom.EventTarget], x: Int, y: Int, width: Int, 
       Context.removeLayer()
   }
 
-  override def setValue[T](propName: String, func: () => T): Unit = throw new NoSuchMethodError("layers.setDouble")
+  override def setValue[T](propName: String, func: () => T): Unit = throw new NoSuchMethodError("layers.setValue")
 }
 
 object splotlayers {

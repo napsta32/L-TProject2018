@@ -13,6 +13,7 @@ package object splot {
   implicit def splot2chord(chord: g.type): publicSplotchord.type = publicSplotchord
   implicit def splot2graph(graph: g.type): Graph.type = Graph
   implicit def splot2drawing(drawing: g.type): splotdrawing.type = splotdrawing
+  implicit def splot2map(map: g.type): splotmapfunc.type = splotmapfunc
 
   abstract class SemiGroup[A] {
     def equals(a: A, b: A): Boolean = {
