@@ -33,8 +33,10 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
   private val WORLD_POPULATION_URL = "https://s3-eu-west-1.amazonaws.com/languages-and-translators/world_population.tsv"
 
   private val d3Selection: Selection[dom.EventTarget] = selection
+
   private var countryEventHandlers: Map[String, (Selection[dom.EventTarget], String) => Unit] = Map()
   private var countrColorSetter: String => String = x => SplotUtils.getRandomColor()
+  private var enableZoom: Boolean = true
 
   override def append(d: Drawing): Drawing = throw new NoSuchMethodError("worldmap.append")
 
@@ -52,13 +54,6 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
     var width = _width - margin.left - margin.right
     var height = _height - margin.top - margin.bottom
 
-    var customColor: ThresholdScale[Primitive, Primitive] = d3.scaleThreshold()
-      .domain(js.Array[Primitive](10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000))
-      .range(js.Array("rgb(247,251,255)", "rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)",
-        "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)"))
-
-    // var path = d3.geoPath()
-
     var svg = selection
       .append("g")
       .attr("class", "map")
@@ -66,6 +61,19 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
     var projection = d3.geoMercator()
       .scale(130)
       .translate( js.Tuple2(width / 2, height / 1.5) )
+
+    //// ZOOM
+    var gdom = svg.append("g")
+    if(enableZoom) {
+      def zoomed: () => Unit = () => {
+        gdom.style("stroke-width", 1.5 / d3.event.transform.k + "px")
+        // g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"); // not in d3 v4
+        gdom.attr("transform", d3.event.transform); // updated for d3 v4
+        ()
+      }
+      var zoom = d3.zoom().scaleExtent(js.Array(1, 8)).on("zoom", zoomed)
+      svg.call(zoom)
+    }
 
     var path = d3.geoPath().projection(projection)
 
@@ -94,7 +102,7 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
           else countrColorSetter(null)
         }
 
-        var countries = svg.append("g")
+        var countries = gdom
           .attr("class", "countries")
           .selectAll("path")
           .data(data.features)
