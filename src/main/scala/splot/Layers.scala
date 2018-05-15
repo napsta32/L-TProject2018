@@ -4,7 +4,7 @@ import d3v4.Selection
 import org.scalajs.dom
 import org.scalajs.dom.EventTarget
 
-class Layers(selection: Selection[dom.EventTarget]) extends Drawing {
+class Layers(selection: Selection[dom.EventTarget], x: Int, y: Int, width: Int, height: Int) extends Drawing {
 
   private var myLayerCount: Int = 0
   private var d3Selection: Selection[dom.EventTarget] = selection
@@ -19,7 +19,7 @@ class Layers(selection: Selection[dom.EventTarget]) extends Drawing {
   override def getSelection[Datum](): Selection[EventTarget] = {
     Context.addLayer()
     myLayerCount += 1
-    Context.buildLayerContainer(d3Selection)
+    Context.buildLayerContainer(d3Selection, x, y, width, height)
   }
 
   def destroyLayers(): Unit = {
@@ -33,7 +33,7 @@ object splotlayers {
   def layers(): (=> Unit) => Unit = layers(400, 400)(_)
   def layers(width: Int, height: Int): (=> Unit) => Unit = layers(0, 0, width, height)(_)
   def layers(x: Int, y: Int, width: Int, height: Int)(body: => Unit): Unit = {
-    val layersObject = new Layers(Context.getD3Selection())
+    val layersObject = new Layers(Context.getD3Selection(), x, y, width, height)
 
     Context
       .append(layersObject)

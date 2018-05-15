@@ -39,8 +39,10 @@ object Context {
 
   def addLayer(): Unit = layerCount += 1
   def removeLayer(): Unit = layerCount -= 1
-  def buildLayerContainer(selection: Selection[dom.EventTarget]): Selection[dom.EventTarget] =
-    selection.append("div").attr("style", "position: absolute;z-index: " + layerCount)
+  def buildLayerContainer(selection: Selection[dom.EventTarget], x: Int, y: Int, width: Int, height: Int): Selection[dom.EventTarget] =
+    selection.append("div").attr("style", "position: absolute;z-index: " + layerCount +
+      ";transform: translate(" + x + "px, " + y + "px);-ms-transform: translate(" + x + "px, " + y + "px);" +
+      "-webkit-transform: translate(" + x + "px," + y + "px);width: " + width + "px;height: " + height + "px;clear: both;overflow:hidden;")
 
   def buildSVG(selection: Selection[dom.EventTarget], width: Int, height: Int): Selection[dom.EventTarget] = {
     selection.append("svg").attr("width", width + "").attr("height", height + "")

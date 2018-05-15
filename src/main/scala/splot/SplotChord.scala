@@ -36,7 +36,7 @@ class SplotChord(selection: Selection[dom.EventTarget]) extends Drawing {
     val outerRadius = Math.min(width, height) * 0.5 - 40
     val innerRadius = outerRadius - 30
 
-    val formatValue = d3.formatPrefix(",.0", 1e3)
+    val formatValue = d3.formatPrefix(",.0", 1e2)
 
     val chord = d3.chord().padAngle(0.05).sortSubgroups(d3.descending)
 

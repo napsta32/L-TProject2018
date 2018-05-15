@@ -13,7 +13,7 @@ object TestSplot {
   @JSExport
   def main (args: Array[String]): Unit = {
 
-    g.layers(0, 0, 900, 450) {
+    g.layers(100, 100, 300, 300) {
       /*
       canvas(0, 100, 900, 200) {
         // Draw shapes
