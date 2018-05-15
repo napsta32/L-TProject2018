@@ -5,6 +5,9 @@ package splot {
     val CHORD_OUTER_RADIUS = "outerRadius"
   }
 
+  // object worldmap_context
+  // object chord_context
+
 }
 
 package object splot {
@@ -14,6 +17,16 @@ package object splot {
   implicit def splot2graph(graph: g.type): Graph.type = Graph
   implicit def splot2drawing(drawing: g.type): splotdrawing.type = splotdrawing
   implicit def splot2map(map: g.type): splotmapfunc.type = splotmapfunc
+
+  /*
+  implicit def wmc2graph(graph: worldmap_context.type): Graph.type = Graph
+  implicit def wmc2drawing(drawing: worldmap_context.type): splotdrawing.type = splotdrawing
+  implicit def wmc2map(map: worldmap_context.type): splotmapfunc.type = splotmapfunc
+
+  implicit def chord2graph(graph: worldmap_context.type): Graph.type = Graph
+  implicit def chord2drawing(drawing: worldmap_context.type): splotdrawing.type = splotdrawing
+  implicit def chord2chord(chord: g.type): publicSplotchord.type = publicSplotchord
+  */
 
   abstract class SemiGroup[A] {
     def equals(a: A, b: A): Boolean = {

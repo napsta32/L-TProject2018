@@ -33,6 +33,7 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
   private val WORLD_POPULATION_URL = "https://s3-eu-west-1.amazonaws.com/languages-and-translators/world_population.tsv"
 
   private val d3Selection: Selection[dom.EventTarget] = selection
+  private var countryEventHandlers: Map[String, (Selection[dom.EventTarget], String) => Unit] = Map()
 
   override def append(d: Drawing): Drawing = throw new NoSuchMethodError("worldmap.append")
 
@@ -45,22 +46,6 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
   def show(): Unit = {
 
     case class Margin(left: Int, right: Int, top: Int, bottom: Int)
-
-    var format = d3.format(",")
-
-    var htmlGen = (dobj: js.Object) => {
-      var d = dobj.asInstanceOf[Feature]
-      "<strong>Country: </strong><span class='details'>" +
-        d.properties.get("name") + "<br></span>" +
-        "<strong>Population: </strong><span class='details'>" +
-        format(d.population) +"</span>"
-    }
-
-    // Set tooltips
-    var tip = d3.tip()
-      .attr("class", "d3-tip")
-      .offset(js.Tuple2(-10, 0))
-      .html(htmlGen)
 
     var margin = Margin(top = 0, right = 0, bottom = 0, left = 0)
     var width = _width - margin.left - margin.right
@@ -82,8 +67,6 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
       .translate( js.Tuple2(width / 2, height / 1.5) )
 
     var path = d3.geoPath().projection(projection)
-
-    svg.call(tip)
 
     type ResponseCallback = js.Function2[js.Any, js.Array[js.Dictionary[String]], Unit]
     type DataCallback = js.Function1[js.Object, Unit]
@@ -136,7 +119,7 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
           .style("stroke-width", "0.3")
         // tooltips
         countries.on("mouseover",(d: Feature) => {
-          tip.show(d)
+          // tip.show(d)
           d3.select(nodes.get(d.id).get)
             .style("opacity", "1")
             .style("stroke","white")
@@ -144,7 +127,7 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
           ()
         })
           .on("mouseout", (d: Feature) => {
-            tip.hide(nodes.get(d.id).get.`__data__`)
+            // tip.hide(nodes.get(d.id).get.`__data__`)
             d3.select(nodes.get(d.id).get)
               .style("opacity", "0.8")
               //.style("stroke","white")
@@ -174,7 +157,7 @@ object splotmapfunc {
   def worldmap(): (=> Unit) => Unit = worldmap(400, 400)(_)
   def worldmap(width: Int, height: Int): (=> Unit) => Unit = worldmap(0, 0, width, height)(_)
   def worldmap(x: Int, y: Int, width: Int, height: Int)(body: => Unit): Unit = {
-    val worldObject = new SplotMap(Context.buildSVG(Context.getD3Selection(), width, height), x, y, width, height)
+    val worldObject = new SplotMap(Context.buildSVG(Context.getD3Selection(x, y, width, height), width, height), x, y, width, height)
 
     Context
       .append(worldObject) // Append to higher order drawing

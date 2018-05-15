@@ -103,7 +103,7 @@ object publicSplotchord {
   def chord(): (=> Unit) => Unit = chord(400, 400)(_)
   def chord(width: Int, height: Int): (=> Unit) => Unit = chord(0, 0, width, height)(_)
   def chord(x: Int, y: Int, width: Int, height: Int)(body: => Unit): Unit = {
-    val chordObject = new SplotChord(Context.buildSVG(Context.getD3Selection(), width, height), x, y, width, height)
+    val chordObject = new SplotChord(Context.buildSVG(Context.getD3Selection(x, y, width, height), width, height), x, y, width, height)
 
     Context
       .append(chordObject) // Append to higher order drawing

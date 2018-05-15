@@ -35,7 +35,7 @@ object splotlayers {
   def layers(): (=> Unit) => Unit = layers(400, 400)(_)
   def layers(width: Int, height: Int): (=> Unit) => Unit = layers(0, 0, width, height)(_)
   def layers(x: Int, y: Int, width: Int, height: Int)(body: => Unit): Unit = {
-    val layersObject = new Layers(Context.getD3Selection(), x, y, width, height)
+    val layersObject = new Layers(Context.getD3Selection(x, y, width, height), x, y, width, height)
 
     Context
       .append(layersObject)
@@ -45,6 +45,8 @@ object splotlayers {
 
     Context
       .pop()
+
+    layersObject.destroyLayers()
   }
 
 }

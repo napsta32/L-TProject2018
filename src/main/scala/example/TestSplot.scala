@@ -13,7 +13,7 @@ object TestSplot {
   @JSExport
   def main (args: Array[String]): Unit = {
 
-    g.layers(100, 100, 1000, 600) {
+    g.layers(1000, 600) {
       /*
       canvas(0, 100, 900, 200) {
         // Draw shapes
@@ -24,7 +24,7 @@ object TestSplot {
         // Plot data here
       }
       */
-      g.chord (100, 100, 1000, 600) {
+      g.chord (1000, 600) {
         val data = g.buildGraph(
           (10: Int, "A" -> "B"),
           (30: Int, "A" -> "C"),
