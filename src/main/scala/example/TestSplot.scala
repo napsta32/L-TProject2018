@@ -14,7 +14,7 @@ object TestSplot {
   def main (args: Array[String]): Unit = {
 
     g.layers(1000, 600) {
-      g.chord (100, 100,300, 300) {
+      g.chord (100, 100,500, 500) {
         val data = g.matrix(
           // Specify amount of flow, source and destination
           g.row(11975,  5871, 8916, 2868),
