@@ -97,13 +97,16 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
       .style("stroke", (d: ChordGroup) => d3.rgb(color(d.index)).darker())
       .attr("d", (x: ChordGroup) => arc(x))
 
-    var groupTick = group.selectAll(".group-tick").data((d: ChordGroup) => groupTicks(d, 1e3))
+    var maxVal: Double = 0
+    for(arr <- matrix) for(value <- arr) maxVal = Math.max(value, maxVal)
+
+    var groupTick = group.selectAll(".group-tick").data((d: ChordGroup) => groupTicks(d, maxVal/10))
       .enter().append("g").attr("class", "group-tick")
       .attr("transform", (d: js.Dictionary[Double]) =>  "rotate(" + (d("angle") * 180 / Math.PI - 90) + ") translate(" + outerRadius + ",0)")
 
     groupTick.append("line").attr("x2", 6)
 
-    groupTick.filter((d: js.Dictionary[Double], _: Int, _: UndefOr[Int]) => d("value") % 5e3 == 0).append("text")
+    groupTick.filter((d: js.Dictionary[Double], _: Int, _: UndefOr[Int]) => d("value") % (maxVal/5) == 0).append("text")
       .attr("x", 8)
       .attr("dy", ".35em")
       .attr("transform", (d: js.Dictionary[Double]) => if(d("angle") > Math.PI) "rotate(180) translate(-16)" else null)
