@@ -1,92 +1,165 @@
 package splot
 
+import scala.language.implicitConversions
 import scalajs.js
 
 abstract class Graph[Node, Edge] {
   import Graph._
 
+  implicit def node: Monoid[Node]
+  implicit def edge: Monoid[Edge]
+
   def isEmpty: Boolean
 
   def source: Node
   def dest: Node
-  var value: Edge
+  def value: Edge
 
-  var tail: Graph[Node, Edge]
+  def tail: Graph[Node, Edge]
 
+  // O(n)
+  // Really necessary?
   def last(): Graph[Node, Edge] = {
     if(tail.isEmpty) this
     else tail.last()
   }
 
-  def concat(g2: Graph[Node, Edge]): Graph[Node, Edge] = {
-    last().tail = g2
-    this
+  // O(n log n)
+  def nodes(visited: Set[Node]): List[Node] = {
+    if(isEmpty) return List[Node]()
+    val visitSource = !visited.contains(source)
+    val visitDest = source!=dest && !visited.contains(dest)
+    if(visitSource && visitDest) return source :: dest :: tail.nodes(visited + source + dest)
+    else if(visitSource) return source :: tail.nodes(visited + source)
+    else if(visitDest) return dest :: tail.nodes(visited + dest)
+    else return tail.nodes(visited)
   }
 
-  def nodes(): Set[Node] = {
-    if(isEmpty) return Set[Node]()
-    tail.nodes() + source + dest
+  // O(n log n)
+  def nodes(): List[Node] = nodes(Set[Node]())
+
+  // O(n^2)
+  def toDenseMatrix(): js.Array[js.Array[Edge]] = {
+    var map: Map[Node, Int] = Map[Node, Int]()
+    var counter: Int = 0
+    nodes().foreach((n: Node) => {
+      map = map + (n -> counter)
+      counter += 1
+    })
+
+    // var m = Array.ofDim[Node](map.size, map.size)
+    var m = js.Array(List.fill(map.size)(js.Array[Edge](List.fill(map.size)(edge.unit): _*)): _*)
+    foreach((v: Edge, s: Node, d: Node) => {
+      m(map.get(s).get)(map.get(d).get) = v
+      ()
+    })
+    m
   }
 
-  // def toMatrix(): js.Array[js.Array[Node]] = ???
-
-  def apply(source: Node, dest: Node)(implicit node: Monoid[Node], edge: Monoid[Edge]): Edge = {
-    if(isEmpty) edge.unit
-    else if(node.equals(source, this.source) && node.equals(dest, this.dest)) value
+  // O(n)
+  def apply(source: Node, dest: Node)(implicit fillEmpties: Boolean = true): Edge = {
+    if(fillEmpties && isEmpty) edge.unit
+    else if(source == this.source && dest == this.dest) value
     else tail(source, dest)
   }
 
+  // O(n)
   def apply(direction: (Node, Node)): Edge = {
-    this(direction._1, direction._2)
+    this.apply(direction._1, direction._2)
   }
 
+  // O(n) when f(_) = false
   def filter(f: (Node, Node) => Boolean): Graph[Node, Edge] = {
     if(f(source, dest)) graph(value, source -> dest, tail.filter(f))
     else tail.filter(f)
   }
 
-  def map[NewEdge](f: (Edge, Node, Node) => NewEdge): Graph[Node, NewEdge] = {
+  def foreach(f: (Edge, Node, Node) => Unit): Unit = {
+    if(isEmpty) ()
+    else {
+      f(value, source, dest)
+      tail.foreach(f)
+    }
+  }
+
+  // O(1)
+  def map[NewEdge <: Edge](f: (Edge, Node, Node) => NewEdge)
+                  (implicit node: Monoid[Node], edge: Monoid[NewEdge]): Graph[Node, NewEdge] = {
     if(isEmpty) emptyGraph()
-    else graph(f(value, source, dest), (source, dest), tail.map(f))
+    else graph(f(value, source, dest), (source, dest), tail.map[NewEdge](f))
   }
 
-  def map[NewEdge](f: (Edge, (Node, Node)) => NewEdge): Graph[Node, NewEdge] = {
+  // O(1)
+  def map[NewEdge](f: (Edge, (Node, Node)) => NewEdge)
+                  (implicit node: Monoid[Node], edge: Monoid[NewEdge]): Graph[Node, NewEdge] = {
     if(isEmpty) emptyGraph()
-    else graph(f(value, source, dest), (source, dest), tail.map(f))
+    else graph(f(value, source -> dest), (source, dest), tail.map(f))
   }
 
-  def flatMap[NewEdge](f: (Edge, Node, Node) => Graph[Node, NewEdge]): Graph[Node, NewEdge] = {
+  // O(1)
+  def flatMap[NewEdge](f: (Edge, Node, Node) => Graph[Node, NewEdge])
+                      (implicit node: Monoid[Node], edge: Monoid[NewEdge]): Graph[Node, NewEdge] = {
     if(isEmpty) return emptyGraph()
-    f(value, source -> dest).concat(tail.flatMap(f))
+    concat(f(value, source, dest), tail.flatMap(f))
   }
 
-  def flatMap[NewEdge](f: (Edge, (Node, Node)) => Graph[Node, NewEdge]): Graph[Node, NewEdge] = {
+  // O(1)
+  def flatMap[NewEdge](f: (Edge, (Node, Node)) => Graph[Node, NewEdge])
+                      (implicit node: Monoid[Node], edge: Monoid[NewEdge]): Graph[Node, NewEdge] = {
     if(isEmpty) return emptyGraph()
-    f(value, source -> dest).concat(tail.flatMap(f))
+    concat(f(value, source -> dest), tail.flatMap(f))
   }
 
 }
 
 object Graph {
 
-  def emptyGraph[Node, Edge](): Graph[Node, Edge] = new Graph[Node, Edge] {
-    def isEmpty = true
+  // O(1)
+  def emptyGraph[Node, Edge]()(implicit _node: Monoid[Node], _edge: Monoid[Edge]): Graph[Node, Edge] = new Graph[Node, Edge] {
+    override def edge: Monoid[Edge] = _edge
+    override def node: Monoid[Node] = _node
 
-    def source = throw new NoSuchElementException("empty.source")
-    def dest = throw new NoSuchElementException("empty.dest")
-    def value = throw new NoSuchElementException("empty.value")
+    override def isEmpty = true
 
-    def tail = throw new NoSuchElementException("empty.tail")
+    override def source = throw new NoSuchElementException("emptyGraph.source")
+    override def dest = throw new NoSuchElementException("emptyGraph.dest")
+    override def value = throw new NoSuchElementException("emptyGraph.value")
+
+    override def tail = throw new NoSuchElementException("emptyGraph.tail")
   }
 
-  def graph[Node, Edge](value: Edge, direction: (Node, Node), tl: => Graph[Node, Edge]): Graph[Node, Edge] = new Graph {
-    def isEmpty = false
+  // O(1)
+  def graph[Node, Edge](_value: Edge, direction: (Node, Node), tl: => Graph[Node, Edge])
+                       (implicit _node: Monoid[Node], _edge: Monoid[Edge]): Graph[Node, Edge] = new Graph[Node, Edge] {
+    override def edge: Monoid[Edge] = _edge
+    override def node: Monoid[Node] = _node
 
-    def source: Node = direction._1
-    def dest: Node = direction._2
-    def value: Edge = value
+    override def isEmpty = false
 
-    def tail: Graph[Node, Edge] = tl
+    override def source: Node = direction._1
+    override def dest: Node = direction._2
+    override def value: Edge = _value
+
+    override def tail: Graph[Node, Edge] = tl
+  }
+
+  def buildGraph[Node, Edge](graph_data: (Edge, (Node, Node))*)
+                            (implicit _node: Monoid[Node], _edge: Monoid[Edge]): Graph[Node, Edge] = {
+    if(graph_data.size == 0) emptyGraph()
+    else graph(graph_data(0)._1, graph_data(0)._2._1 -> graph_data(0)._2._2, buildGraph(graph_data.tail: _*))
+  }
+
+  def buildGraph3[Node, Edge](graph_data: (Edge, Node, Node)*)
+                            (implicit _node: Monoid[Node], _edge: Monoid[Edge]): Graph[Node, Edge] = {
+    if(graph_data.size == 0) emptyGraph()
+    else graph(graph_data(0)._1, graph_data(0)._2 -> graph_data(0)._3, buildGraph3(graph_data.tail: _*))
+  }
+
+  // O(1)
+  def concat[Node, Edge](g1: Graph[Node, Edge], g2: Graph[Node, Edge])
+                        (implicit node: Monoid[Node], edge: Monoid[Edge]): Graph[Node, Edge] = {
+    if(g1.tail.isEmpty) return graph(g1.value, g1.source -> g1.dest, g2)
+    else return graph(g1.value, g1.source -> g1.dest, concat(g1.tail, g2))
   }
 
 }

@@ -2,7 +2,7 @@
 enablePlugins(ScalaJSPlugin)
 enablePlugins(ScalaJSBundlerPlugin)
 
-name := "Example"
+name := "Splot"
 
 version := "0.1-SNAPSHOT"
 
@@ -13,7 +13,7 @@ libraryDependencies ++= Seq(
 )
 
 scalaJSUseMainModuleInitializer := true
-mainClass := Some("example.ScalaJSExample")
+mainClass := Some("example.TestSplot")
 
 
 npmDependencies in Compile ++= (

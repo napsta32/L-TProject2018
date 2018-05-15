@@ -1,25 +1,28 @@
 package splot
 
-import java.util
-
 object Context {
-  private var contextStack: util.Stack[Drawing] = null
+  private var contextStack: List[Drawing] = List[Drawing]()
 
   def append(drawing: Drawing): this.type = {
-    if(contextStack.size() > 0)
-      contextStack.peek().append(drawing)
+    if(contextStack.size > 0)
+      contextStack(0).append(drawing)
+    this
+  }
+
+  def setData[Node, Edge](graph: Graph[Node, Edge]): this.type = {
+    if(contextStack.size > 0)
+      contextStack(0).setData(graph)
+    else throw new Exception("Out of context call (setData)")
     this
   }
 
   def push(drawing: Drawing): this.type = {
-    contextStack.push(drawing)
+    contextStack = drawing :: contextStack
     this
   }
 
-  def get(): Drawing = contextStack.peek()
-
   def pop(): this.type = {
-    contextStack.pop()
+    contextStack = contextStack.tail
     this
   }
 }
