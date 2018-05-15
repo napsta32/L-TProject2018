@@ -11,6 +11,8 @@ import scala.scalajs.js.UndefOr
 class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: Int, height: Int) extends Drawing {
   val d3Selection: Selection[dom.EventTarget] = selection
   var data: Graph[String, Double] = null
+  var matrix: Matrix[Double] = null
+  var cols: Row[String] = null
 
   private var outerRadiusFunc: () => Double = () => Math.min(width, height) * 0.5 - 40
   private var innerRadiusFunc: () => Double = () => outerRadiusFunc() - 30
@@ -119,6 +121,12 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
 
   override def onLoadSVG(callback: Selection[EventTarget] => Unit): Drawing = {
     loadSVG = callback
+    this
+  }
+
+  override def setData[Node, Edge](m: Matrix[Edge], cols: Row[Node]): Drawing = {
+    this.matrix = m.asInstanceOf[Matrix[Double]]
+    this.cols = m.asInstanceOf[Row[String]]
     this
   }
 }

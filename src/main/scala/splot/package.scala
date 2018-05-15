@@ -1,3 +1,5 @@
+import scala.language.implicitConversions
+
 package splot {
 
   object g {
@@ -12,6 +14,11 @@ package splot {
   // object worldmap_context
   // object chord_context
 
+  class MyTuple[+A, +B](__1: A, __2: B) {
+    def _1: A = __1
+    def _2: B = __2
+  }
+
 }
 
 package object splot {
@@ -21,6 +28,8 @@ package object splot {
   implicit def splot2graph(graph: g.type): Graph.type = Graph
   implicit def splot2drawing(drawing: g.type): splotdrawing.type = splotdrawing
   implicit def splot2map(map: g.type): splotmapfunc.type = splotmapfunc
+
+
 
   /*
   implicit def wmc2graph(graph: worldmap_context.type): Graph.type = Graph

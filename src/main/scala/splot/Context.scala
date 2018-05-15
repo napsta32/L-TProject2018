@@ -20,6 +20,13 @@ object Context {
     this
   }
 
+  def setData[Node, Edge](m: Matrix[Edge], cols: Row[Node]): this.type = {
+    if(contextStack.nonEmpty)
+      contextStack.head.setData(m, cols)
+    else throw new Exception("Out of context call (setData)")
+    this
+  }
+
   def setValue[T](propName: String, func: () => T): this.type = {
     if(contextStack.nonEmpty)
       contextStack.head.setValue(propName, func)

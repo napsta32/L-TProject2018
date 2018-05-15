@@ -1,5 +1,9 @@
 ## Get started
 
+**This project requires IntelliJ 2018**
+
+After building the project, run splot.html to view results
+
 To get started, open `sbt` in this example project, and execute the task
 `fastOptJS::webpack`. This creates the file `target/scala-2.12/scalajs-bundler/example-fastopt-bundle.js`.
 You can now open `index.html` in your favorite Web browser!
