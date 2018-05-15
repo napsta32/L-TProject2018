@@ -12,8 +12,10 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
   val d3Selection: Selection[dom.EventTarget] = selection
   var data: Graph[String, Double] = null
 
-  var outerRadiusFunc: () => Double = () => Math.min(width, height) * 0.5 - 40
-  var innerRadiusFunc: () => Double = () => outerRadiusFunc() - 30
+  private var outerRadiusFunc: () => Double = () => Math.min(width, height) * 0.5 - 40
+  private var innerRadiusFunc: () => Double = () => outerRadiusFunc() - 30
+  private var zoomEnabled = true
+  private var loadSVG: Selection[EventTarget] => Unit = x => ()
 
   override def append(d: Drawing): Drawing = {
     this
@@ -46,23 +48,29 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
     }
 
     val svg = d3Selection
-    val width = svg.attr("width").toDouble
-    val height = svg.attr("height").toDouble
     val outerRadius = outerRadiusFunc()
     val innerRadius = innerRadiusFunc()
 
     val formatValue = d3.formatPrefix(",.0", 1e2)
-
     val chord = d3.chord().padAngle(0.05).sortSubgroups(d3.descending)
-
     val arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius)
-
     val ribbon = d3.ribbon().radius(innerRadius)
 
     val color = d3.scaleOrdinal[Int, String]().domain(d3.range(4)).range(
       js.Array(List.fill(data.nodes().size)(SplotUtils.getRandomColor()): _*))
 
     val gdom: Selection[ChordArray] = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")").datum(chord(data.toDenseMatrix()))
+
+    if(zoomEnabled) {
+      def zoomed: () => Unit = () => {
+        gdom.style("stroke-width", 1.5 / d3.event.transform.k + "px")
+        // g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"); // not in d3 v4
+        gdom.attr("transform", d3.event.transform); // updated for d3 v4
+        ()
+      }
+      var zoom = d3.zoom().scaleExtent(js.Array(1, 8)).on("zoom", zoomed)
+      svg.call(zoom)
+    }
 
     val group: Selection[ChordGroup] = gdom.append("g").attr("class", "groups")
       .selectAll("g")
@@ -92,6 +100,8 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
       .style("fill", (d: Chord) => color(d.target.index))
       .style("stroke", (d: Chord) => d3.rgb(color(d.target.index)).darker())
 
+    loadSVG(svg)
+
     this
   }
 
@@ -102,7 +112,15 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
 
   override def setCountryColor(setter: String => String): Drawing = throw new NoSuchMethodError("chord.setCountryColor")
 
-  override def setZoom(enabled: Boolean): Drawing = throw new NoSuchMethodError("chord.setZoom")
+  override def setZoom(enabled: Boolean): Drawing = {
+    zoomEnabled = enabled
+    this
+  }
+
+  override def onLoadSVG(callback: Selection[EventTarget] => Unit): Drawing = {
+    loadSVG = callback
+    this
+  }
 }
 
 object publicSplotchord {

@@ -34,6 +34,13 @@ object Context {
     this
   }
 
+  def onLoadSVG(callback: (Selection[dom.EventTarget]) => Unit): this.type = {
+    if(contextStack.nonEmpty)
+      contextStack.head.onLoadSVG(callback)
+    else throw new Exception("Out of context call (onLoadSVG)")
+    this
+  }
+
   def setCountryHandler(eventName: String, handler: (Selection[dom.EventTarget], String) => Unit): this.type = {
     if(contextStack.nonEmpty)
       contextStack.head.setCountryHandler(eventName, handler)

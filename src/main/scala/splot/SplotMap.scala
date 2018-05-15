@@ -37,6 +37,7 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
   private var countryEventHandlers: Map[String, (Selection[dom.EventTarget], String) => Unit] = Map()
   private var countrColorSetter: String => String = x => SplotUtils.getRandomColor()
   private var enableZoom: Boolean = true
+  private var loadSVG: Selection[EventTarget] => Unit = x => ()
 
   override def append(d: Drawing): Drawing = throw new NoSuchMethodError("worldmap.append")
 
@@ -65,6 +66,14 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
     //// ZOOM
     var gdom = svg.append("g")
     if(enableZoom) {
+      if(false) {
+        var prebuild = svg.append("rect")
+          .attr("class", "background")
+          .style("opacity", "0")
+          .attr("width", width)
+          .attr("height", height)
+      }
+
       def zoomed: () => Unit = () => {
         gdom.style("stroke-width", 1.5 / d3.event.transform.k + "px")
         // g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"); // not in d3 v4
@@ -73,6 +82,12 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
       }
       var zoom = d3.zoom().scaleExtent(js.Array(1, 8)).on("zoom", zoomed)
       svg.call(zoom)
+
+      var reset:() => Unit = () => {
+        // TODO: svg.transition
+        // svg.transition().duration(750).call( zoom.transform, d3.zoomIdentity );
+      }
+      // TODO: if(false) prebuild.on("click", reset)
     }
 
     var path = d3.geoPath().projection(projection)
@@ -131,6 +146,8 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
           // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
           .attr("class", "names")
           .attr("d", path)
+
+        loadSVG(svg)
       })
 
   }
@@ -147,6 +164,11 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
 
   override def setZoom(enabled: Boolean): Drawing = {
     enableZoom = enabled
+    this
+  }
+
+  override def onLoadSVG(callback: Selection[EventTarget] => Unit): Drawing = {
+    loadSVG = callback
     this
   }
 }

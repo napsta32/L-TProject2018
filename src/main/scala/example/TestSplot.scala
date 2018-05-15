@@ -1,7 +1,7 @@
 package example
 
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
-import splot.g
+import splot.{SplotUtils, g}
 
 import scala.scalajs.js.JSON
 
@@ -24,7 +24,7 @@ object TestSplot {
         // Plot data here
       }
       */
-      g.chord (1000, 600) {
+      g.chord (300, 300) {
         val data = g.buildGraph(
           (10: Int, "A" -> "B"),
           (30: Int, "A" -> "C"),
@@ -36,7 +36,7 @@ object TestSplot {
         g.setData(data)
         g.setValue(g.CHORD_INNER_RADIUS, 12)
       }
-      g.chord (100, 100, 200, 200) {
+      g.chord (0, 0, 200, 200) {
         val data = g.buildGraph (
           (10: Int, "A" -> "B"),
           (30: Int, "A" -> "C"),
@@ -72,6 +72,7 @@ object TestSplot {
         g.setCountryHandler(g.EVENT_MOUSE_OUT, (dom, countryName) => {
           dom
             .style("opacity", "0.8")
+            .style("fill", SplotUtils.getRandomColor())
         })
 
       }

@@ -11,6 +11,7 @@ abstract class Drawing {
   def setValue[T](propName: String, func: () => T): Unit
 
   def setZoom(enabled: Boolean): Drawing
+  def onLoadSVG(callback: (Selection[dom.EventTarget]) => Unit): Drawing
 
   // worldmap
   def setCountryHandler(eventName: String, handler: (Selection[dom.EventTarget], String) => Unit): Drawing
@@ -42,6 +43,11 @@ object splotdrawing {
   }
   def setCountryColor(setter: String => String): this.type = {
     Context.setCountryColor(setter)
+    this
+  }
+
+  def onLoadSVG(callback: (Selection[dom.EventTarget]) => Unit): this.type = {
+    Context.onLoadSVG(callback)
     this
   }
 
