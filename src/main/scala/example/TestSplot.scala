@@ -13,21 +13,21 @@ object TestSplot {
   @JSExport
   def main (args: Array[String]): Unit = {
 
-//    g.layers(1000, 600) {
-//      g.chord (100, 100,300, 300) {
-//        val data = g.matrix(
-//          // Specify amount of flow, source and destination
-//          g.row(11975,  5871, 8916, 2868),
-//          g.row(1951, 10048, 2060, 6171),
-//          g.row(8010, 16145, 8090, 8045),
-//          g.row(1013,   990,  940, 6907)
-//        )
-//
-//        g.setData(data, g.row("A", "B", "C", "D")) // Send data to plotter
-//        // Set custom property
-//        g.setValue(g.CHORD_OUTER_RADIUS, 150)
-//      }
-//    }
+    g.layers(1000, 600) {
+      g.chord (100, 100,300, 300) {
+        val data = g.matrix(
+          // Specify amount of flow, source and destination
+          g.row(11975,  5871, 8916, 2868),
+          g.row(1951, 10048, 2060, 6171),
+          g.row(8010, 16145, 8090, 8045),
+          g.row(1013,   990,  940, 6907)
+        )
+
+        g.setData(data, g.row("A", "B", "C", "D")) // Send data to plotter
+        // Set custom property
+        g.setValue(g.CHORD_OUTER_RADIUS, 150)
+      }
+    }
 
     g.layers(1000, 600) {
       g.chord (300, 300) {

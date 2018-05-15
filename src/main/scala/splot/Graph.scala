@@ -113,24 +113,18 @@ abstract class Graph[Node, Edge] {
 
 }
 
-trait Row[A] {
-  var _items:Seq[A] = null
-
-  def getItems(): Seq[A] = _items
-}
-
-class Matrix[A](_rows: Seq[Row[A]]) {
+abstract class Matrix[A](_rows: List[List[A]]) {
 
   val rows = _rows
 
   def toJSMatrix()(implicit monoid: Monoid[A]): js.Array[js.Array[A]] = {
     if(rows.isEmpty) throw new Exception("Empty matrix")
     val fixedSize = rows.size
-    for(row <- rows) if(row.getItems().size != fixedSize) throw new Exception("Expected square matrix")
+    for(row <- rows) if(row.size != fixedSize) throw new Exception("Expected square matrix")
 
     var m = js.Array(List.fill(fixedSize)(js.Array[A](List.fill(fixedSize)(monoid.unit): _*)): _*)
     for(row <- rows;i <- 0 until fixedSize)
-      for(item <- row.getItems();j <- 0 until fixedSize) {
+      for(item <- row;j <- 0 until fixedSize) {
         m(i)(j) = item
       }
     m
@@ -139,10 +133,8 @@ class Matrix[A](_rows: Seq[Row[A]]) {
 
 object Graph {
 
-  def row[A](items: A*): Row[A] = new Row[A] {
-    _items = items.seq
-  }
-  def matrix[A](rows: Row[A]*): Matrix[A] = new Matrix(rows.seq)
+  def row[A](items: A*): List[A] = List[A](items: _*)
+  def matrix[A](rows: List[A]*): Matrix[A] = new Matrix(List[List[A]](rows: _*)) {}
 
   // O(1)
   def emptyGraph[Node, Edge]()(implicit _node: Monoid[Node], _edge: Monoid[Edge]): Graph[Node, Edge] = new Graph[Node, Edge] {

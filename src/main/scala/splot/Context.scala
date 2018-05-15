@@ -20,7 +20,7 @@ object Context {
     this
   }
 
-  def setData[Node, Edge](m: Matrix[Edge], cols: Row[Node]): this.type = {
+  def setData[Node, Edge](m: Matrix[Edge], cols: Seq[Node]): this.type = {
     if(contextStack.nonEmpty)
       contextStack.head.setData(m, cols)
     else throw new Exception("Out of context call (setData)")

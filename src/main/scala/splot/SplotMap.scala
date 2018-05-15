@@ -172,7 +172,7 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
     this
   }
 
-  override def setData[A, B](m: Matrix[B], cols: Row[A]): Drawing = throw new NoSuchMethodError("worldmap.setData")
+  override def setData[A, B](m: Matrix[B], cols: Seq[A]): Drawing = throw new NoSuchMethodError("worldmap.setData")
 }
 
 object splotmapfunc {

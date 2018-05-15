@@ -38,7 +38,7 @@ class Layers(selection: Selection[dom.EventTarget], x: Int, y: Int, width: Int, 
 
   override def onLoadSVG(callback: Selection[EventTarget] => Unit): Drawing = throw new NoSuchMethodError("layers.onLoadSVG")
 
-  override def setData[A, B](m: Matrix[B], cols: Row[A]): Drawing = throw new NoSuchMethodError("layers.setData")
+  override def setData[A, B](m: Matrix[B], cols: Seq[A]): Drawing = throw new NoSuchMethodError("layers.setData")
 }
 
 object splotlayers {

@@ -12,7 +12,7 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
   val d3Selection: Selection[dom.EventTarget] = selection
   var data: Graph[String, Double] = null
   var matrix: Matrix[Double] = null
-  var cols: Row[String] = null
+  var cols: Seq[String] = null
 
   private var outerRadiusFunc: () => Double = () => Math.min(width, height) * 0.5 - 40
   private var innerRadiusFunc: () => Double = () => outerRadiusFunc() - 30
@@ -41,6 +41,8 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
   }
 
   def show(): SplotChord = {
+    if(data == null && this.matrix == null) return this
+
     implicit def fun2datumfun[Datum](x: (Datum) => Primitive): js.Function3[Datum, Int, UndefOr[Int], Primitive] = (v: Datum, _: Int, _: UndefOr[Int]) => x(v)
     implicit def obj2primitive(x: js.Object): Primitive = x.toString()
 
@@ -58,10 +60,22 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
     val arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius)
     val ribbon = d3.ribbon().radius(innerRadius)
 
-    val color = d3.scaleOrdinal[Int, String]().domain(d3.range(4)).range(
-      js.Array(List.fill(data.nodes().size)(SplotUtils.getRandomColor()): _*))
+    var ncols: Int = 0
+    if(data == null)
+      ncols = cols.size
+    else ncols = data.nodes().size
 
-    val gdom: Selection[ChordArray] = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")").datum(chord(data.toDenseMatrix()))
+    val color = d3.scaleOrdinal[Int, String]().domain(d3.range(4)).range(
+      js.Array(List.fill(ncols)(SplotUtils.getRandomColor()): _*))
+
+    var matrix: js.Array[js.Array[Double]] = null
+    if(data == null)
+      matrix = this.matrix.toJSMatrix()
+    else matrix = data.toDenseMatrix()
+
+    val gdom: Selection[ChordArray] = svg.append("g")
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+      .datum(chord(matrix))
 
     if(zoomEnabled) {
       def zoomed: () => Unit = () => {
@@ -124,9 +138,9 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
     this
   }
 
-  override def setData[Node, Edge](m: Matrix[Edge], cols: Row[Node]): Drawing = {
+  override def setData[Node, Edge](m: Matrix[Edge], cols: Seq[Node]): Drawing = {
     this.matrix = m.asInstanceOf[Matrix[Double]]
-    this.cols = m.asInstanceOf[Row[String]]
+    this.cols = cols.asInstanceOf[Seq[String]]
     this
   }
 }
