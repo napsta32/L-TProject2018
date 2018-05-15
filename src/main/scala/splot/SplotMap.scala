@@ -34,6 +34,7 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
 
   private val d3Selection: Selection[dom.EventTarget] = selection
   private var countryEventHandlers: Map[String, (Selection[dom.EventTarget], String) => Unit] = Map()
+  private var countrColorSetter: String => String = x => SplotUtils.getRandomColor()
 
   override def append(d: Drawing): Drawing = throw new NoSuchMethodError("worldmap.append")
 
@@ -82,21 +83,24 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
       .defer(callTSV, WORLD_POPULATION_URL)
       .await((error: js.Any, dataObj: js.Object, populationObj: js.Object) => {
         var data = dataObj.asInstanceOf[CountryStruct]
-        var population = populationObj.asInstanceOf[js.Array[js.Dictionary[String]]]
+        // var population = populationObj.asInstanceOf[js.Array[js.Dictionary[String]]]
 
-        var populationById = js.Dictionary[String]()
+        // var populationById = js.Dictionary[String]()
 
-        population.foreach((d: js.Dictionary[String]) => populationById.update(d.get("id").get, d.get("population").get) )
-        data.features.map(d => populationById.get("id"))
+        // population.foreach((d: js.Dictionary[String]) => populationById.update(d.get("id").get, d.get("population").get) )
+        // data.features.map(d => populationById.get("id"))
 
         // population.foreach((d: js.Dictionary[String]) => println(JSON.stringify(d)))
         // println(JSON.stringify(data))
 
         var getColor: (Feature, Int, UndefOr[Int]) => Primitive = (d: Feature, _: Int, _: UndefOr[Int]) => {
-          if(!populationById.get(d.id).isDefined) {
+          /*if(!populationById.get(d.id).isDefined) {
             println("Could not find id " + d.id)
             null
-          } else customColor(populationById.get(d.id).get)
+          } else customColor(populationById.get(d.id).get)*/
+          if(d.properties.get("name").isDefined)
+            countrColorSetter(d.properties.get("name").get)
+          else countrColorSetter(null)
         }
 
         var countries = svg.append("g")
@@ -112,28 +116,15 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
           val f = e.`__data__`.asInstanceOf[Feature]
           nodes.update(f.id, e)
         })
-        //.style("stroke", "green")
-        // .style("stroke-width", "1.5")
-        // .style("opacity","1")
+
         countries.style("fill", getColor).style("stroke", "white")
           .style("stroke-width", "0.3")
-        // tooltips
-        countries.on("mouseover",(d: Feature) => {
-          // tip.show(d)
-          d3.select(nodes.get(d.id).get)
-            .style("opacity", "1")
-            .style("stroke","white")
-            .style("stroke-width","3")
-          ()
-        })
-          .on("mouseout", (d: Feature) => {
-            // tip.hide(nodes.get(d.id).get.`__data__`)
-            d3.select(nodes.get(d.id).get)
-              .style("opacity", "0.8")
-              //.style("stroke","white")
-              .style("stroke-width","0.3")
-            ()
+
+        for ((k,v) <- countryEventHandlers) {
+          countries.on(k, (d: Feature) => {
+            v(d3.select(nodes.get(d.id).get), d.properties.get("name").get)
           })
+        }
 
         // Unselect
         d3.select("body")
@@ -149,6 +140,16 @@ class SplotMap(selection: Selection[dom.EventTarget], x: Int, y: Int, _width: In
           .attr("d", path)
       })
 
+  }
+
+  override def setCountryHandler(eventName: String, handler: (Selection[EventTarget], String) => Unit): Drawing = {
+    countryEventHandlers = countryEventHandlers + (eventName -> handler)
+    this
+  }
+
+  override def setCountryColor(setter: String => String): Drawing = {
+    countrColorSetter = setter
+    this
   }
 }
 

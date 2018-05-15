@@ -96,6 +96,11 @@ class SplotChord(selection: Selection[dom.EventTarget], x: Int, y: Int, width: I
   }
 
   override def getSelection(): Selection[EventTarget] = d3Selection
+
+  override def setCountryHandler(eventName: String, handler: (Selection[EventTarget], String) => Unit): Drawing =
+    throw new NoSuchMethodError("chord.setCountryHandler")
+
+  override def setCountryColor(setter: String => String): Drawing = throw new NoSuchMethodError("chord.setCountryColor")
 }
 
 object publicSplotchord {

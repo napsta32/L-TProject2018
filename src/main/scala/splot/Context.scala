@@ -23,7 +23,21 @@ object Context {
   def setValue[T](propName: String, func: () => T): this.type = {
     if(contextStack.nonEmpty)
       contextStack.head.setValue(propName, func)
-    else throw new Exception("Out of context call (setDouble)")
+    else throw new Exception("Out of context call (setValue)")
+    this
+  }
+
+  def setCountryHandler(eventName: String, handler: (Selection[dom.EventTarget], String) => Unit): this.type = {
+    if(contextStack.nonEmpty)
+      contextStack.head.setCountryHandler(eventName, handler)
+    else throw new Exception("Out of context call (setCountryHandler)")
+    this
+  }
+
+  def setCountryColor(setter: String => String):this.type = {
+    if(contextStack.nonEmpty)
+      contextStack.head.setCountryColor(setter)
+    else throw new Exception("Out of context call (setCountryHandler)")
     this
   }
 

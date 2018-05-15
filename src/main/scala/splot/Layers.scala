@@ -28,6 +28,11 @@ class Layers(selection: Selection[dom.EventTarget], x: Int, y: Int, width: Int, 
   }
 
   override def setValue[T](propName: String, func: () => T): Unit = throw new NoSuchMethodError("layers.setValue")
+
+  override def setCountryHandler(eventName: String, handler: (Selection[EventTarget], String) => Unit): Drawing =
+    throw new NoSuchMethodError("layers.setCountryHandler")
+
+  override def setCountryColor(setter: String => String): Drawing = throw new NoSuchMethodError("layers.setCountryColor")
 }
 
 object splotlayers {

@@ -10,6 +10,10 @@ abstract class Drawing {
   def getSelection(): Selection[dom.EventTarget]
   def setValue[T](propName: String, func: () => T): Unit
 
+  // worldmap
+  def setCountryHandler(eventName: String, handler: (Selection[dom.EventTarget], String) => Unit): Drawing
+  def setCountryColor(setter: String => String): Drawing
+
 }
 
 object splotdrawing {
@@ -24,5 +28,14 @@ object splotdrawing {
     this
   }
   def setValue[T](propName: String, value: T): this.type = setValue(propName, () => value)
+
+  def setCountryHandler(eventName: String, handler: (Selection[dom.EventTarget], String) => Unit): this.type = {
+    Context.setCountryHandler(eventName, handler)
+    this
+  }
+  def setCountryColor(setter: String => String): this.type = {
+    Context.setCountryColor(setter)
+    this
+  }
 
 }

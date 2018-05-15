@@ -3,6 +3,10 @@ package splot {
   object g {
     val CHORD_INNER_RADIUS = "innerRadius"
     val CHORD_OUTER_RADIUS = "outerRadius"
+
+    val EVENT_MOUSE_OVER = "mouseover"
+    val EVENT_MOUSE_OUT = "mouseout"
+    val EVENT_PICK_COUNTRY_COLOR = "pick_country_color"
   }
 
   // object worldmap_context
