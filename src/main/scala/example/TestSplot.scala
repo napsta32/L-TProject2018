@@ -31,7 +31,7 @@ object TestSplot {
 
     g.layers(1000, 600) {
       g.chord (300, 300) {
-        val data = g.buildGraph(
+        val data = g.buildBiGraph(
           (10: Int, "A" -> "B"),
           (30: Int, "A" -> "C"),
           (60: Int, "D" -> "E"),
@@ -46,7 +46,7 @@ object TestSplot {
 
     g.layers(1000, 600) {
       g.chord (300, 300) {
-        val data = g.buildGraph(
+        val data = g.buildBiGraph(
           (10: Int, "A" -> "B"),
           (30: Int, "A" -> "C"),
           (60: Int, "D" -> "E"),

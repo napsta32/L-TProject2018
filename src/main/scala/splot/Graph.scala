@@ -166,6 +166,14 @@ object Graph {
       override def tail: Graph[Node, Edge] = tl
     }
 
+  def buildBiGraph[Node, Edge](graph_data: (Edge, (Node, Node))*)
+                            (implicit _node: Monoid[Node], _edge: Monoid[Edge]): Graph[Node, Edge] = {
+    if(graph_data.size == 0) emptyGraph()
+    else graph(graph_data(0)._1, graph_data(0)._2._1 -> graph_data(0)._2._2,
+      graph(graph_data(0)._1, graph_data(0)._2._2 -> graph_data(0)._2._1,
+        buildBiGraph(graph_data.tail: _*)))
+  }
+
   def buildGraph[Node, Edge](graph_data: (Edge, (Node, Node))*)
                             (implicit _node: Monoid[Node], _edge: Monoid[Edge]): Graph[Node, Edge] = {
     if(graph_data.size == 0) emptyGraph()
